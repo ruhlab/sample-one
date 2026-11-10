@@ -1,4 +1,4 @@
-# WebSample
+# SAMPLE/ONE
 
 A single-sample waveform editor and capture tool that runs entirely in a browser. Minimal, responsive UI styled with **Tailwind CSS v4 Play CDN** plus a small custom stylesheet. There is **no framework and no build step**. Bun serves the app and the locally installed Signalsmith Stretch audio engine.
 
