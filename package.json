@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun --watch server.ts",
+    "build": "bun build.ts",
     "start": "bun server.ts"
   },
   "dependencies": {

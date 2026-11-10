@@ -12,6 +12,9 @@ const files = new Map([
   ["/resample-worker.js", { filename: "resample-worker.js", mime: "text/javascript; charset=utf-8" }],
   ["/app.js", { filename: "app.js", mime: "text/javascript; charset=utf-8" }],
   ["/fallback.css", { filename: "fallback.css", mime: "text/css; charset=utf-8" }],
+  ["/favicon.svg", { filename: "favicon.svg", mime: "image/svg+xml" }],
+  ["/apple-touch-icon.png", { filename: "apple-touch-icon.png", mime: "image/png" }],
+  ["/social-card.png", { filename: "social-card.png", mime: "image/png" }],
 ]);
 
 const server = Bun.serve({

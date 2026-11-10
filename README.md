@@ -1,5 +1,9 @@
 # SAMPLE/ONE
 
+Run `bun run build` to create a self-contained `dist/index.html` containing the app, its audio engines, example audio, and icons. Serve the file over HTTPS (or localhost) for browser audio and MIDI permissions.
+
+GitHub Pages is deployed by `.github/workflows/pages.yml` on pushes to `main` or by manually running the workflow. In the repository settings, set **Pages → Build and deployment → Source** to **GitHub Actions**. The workflow builds the standalone HTML and also publishes `social-card.png`, which social networks need as a separate public file.
+
 A single-sample waveform editor and capture tool that runs entirely in a browser. Minimal, responsive UI styled with **Tailwind CSS v4 Play CDN** plus a small custom stylesheet. There is **no framework and no build step**. Bun serves the app and the locally installed Signalsmith Stretch audio engine.
 
 ## Run
