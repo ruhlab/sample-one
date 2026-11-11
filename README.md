@@ -4,10 +4,10 @@ A browser-based sampler for capturing audio, editing and chopping samples, build
 
 ## Development
 
-Install [Bun](https://bun.sh/) and Node.js, then run:
+Install [Bun](https://bun.sh/), then run:
 
 ```sh
-npm ci
+bun install --frozen-lockfile
 bun run dev
 ```
 
@@ -19,8 +19,10 @@ Tailwind CSS is installed locally and compiled at build time. The app does not l
 
 ```sh
 bun run build    # create dist/index.html and dist/assets/drum.wav
-npm test         # run audio utility tests
-npm run typecheck # check TypeScript
+bun test         # run audio utility tests
+bun run typecheck # check TypeScript
+bun fmt          # format project files
+bun fmt --check  # check formatting without writing files
 ```
 
 The TypeScript configuration is currently permissive; parts of the existing UI and shared state still need more specific types.

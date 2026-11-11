@@ -1,148 +1,2152 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#0c1114" />
-  <title>SAMPLE/ONE — Audio Sampler</title>
-  <meta name="description" content="A minimal one-sample audio workstation. Capture a browser tab or input, edit waveforms, chop slices and export WAV." />
-  <link rel="canonical" href="https://ruhlab.github.io/sample-one/" />
-  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
-  <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="SAMPLE/ONE" />
-  <meta property="og:title" content="SAMPLE/ONE — Audio Sampler" />
-  <meta property="og:description" content="Capture, edit and chop audio, build an FX chain, and play slices in your browser." />
-  <meta property="og:url" content="https://ruhlab.github.io/sample-one/" />
-  <meta property="og:image" content="https://ruhlab.github.io/sample-one/social-card.png?v=2" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="SAMPLE/ONE — Capture, Edit, Chop, Play" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="SAMPLE/ONE — Audio Sampler" />
-  <meta name="twitter:description" content="Capture, edit and chop audio, build an FX chain, and play slices in your browser." />
-  <meta name="twitter:image" content="https://ruhlab.github.io/sample-one/social-card.png?v=2" />
-  <link rel="stylesheet" href="./styles/app.css" />
-
-</head>
-<body>
-  <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
-    <symbol id="ic-play" viewBox="0 0 24 24"><path d="M8 5 19 12 8 19V5Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
-    <symbol id="ic-selection-play" viewBox="0 0 24 24"><path d="M4 5v14M20 5v14M9 7l7 5-7 5z"/></symbol>
-    <symbol id="ic-loop" viewBox="0 0 24 24"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4m14-1v2a3 3 0 0 1-3 3H3"/></symbol>
-    <symbol id="ic-detect" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m14.5 14.5 5 5M7 10h2l1-3 2 6 1-3h1"/></symbol>
-    <symbol id="ic-speed" viewBox="0 0 24 24"><path d="M4 18a9 9 0 1 1 16 0M12 13l4-5M7 18h10"/><circle cx="12" cy="13" r="1"/></symbol>
-    <symbol id="ic-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
-    <symbol id="ic-start" viewBox="0 0 24 24"><path d="M5 5v14M19 12H8m0 0 4-4m-4 4 4 4"/></symbol>
-    <symbol id="ic-end" viewBox="0 0 24 24"><path d="M19 5v14M5 12h11m0 0-4-4m4 4-4 4"/></symbol>
-    <symbol id="ic-range" viewBox="0 0 24 24"><path d="M5 5v14m14-14v14M8 12h8m-8 0 3-3m-3 3 3 3m5-3-3-3m3 3-3 3"/></symbol>
-    <symbol id="ic-stop" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor"/></symbol>
-    <symbol id="ic-record" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="currentColor"/></symbol>
-    <symbol id="ic-upload" viewBox="0 0 24 24"><path d="M12 16V3m0 0L7 8m5-5 5 5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></symbol>
-    <symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 3v13m0 0 5-5m-5 5-5-5M4 18v3h16v-3"/></symbol>
-    <symbol id="ic-cut" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.5 8.5 20 20M14 10l6-6M8.5 15.5 11 13"/></symbol>
-    <symbol id="ic-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3m-4 0h8"/></symbol>
-    <symbol id="ic-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></symbol>
-    <symbol id="ic-undo" viewBox="0 0 24 24"><path d="m9 14-6-5 6-5M3 9h10a8 8 0 0 1 0 16"/></symbol>
-    <symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4 7h16m-14 0 1 14h10l1-14M9 7V4h6v3M10 11v7m4-7v7"/></symbol>
-    <symbol id="ic-power" viewBox="0 0 24 24"><path d="M12 3v9M6.5 6.5a8 8 0 1 0 11 0"/></symbol>
-    <symbol id="ic-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 2 7M4 4v6h6"/></symbol>
-    <symbol id="ic-skip" viewBox="0 0 24 24"><path d="m5 5 12 7-12 7V5m13 0v14"/></symbol>
-  </svg>
-  <div class="app-container mx-auto w-full max-w-[1530px] px-4 pb-10 sm:px-7 lg:px-10">
-    <header class="mb-7 app-header">
-      <div class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-xl border border-[#536840] bg-[#273426]" aria-hidden="true"><svg width="25" height="25" viewBox="0 0 25 25" fill="none"><path d="M2 12.5h3l2.5-8 4.5 16L16 7l2 5.5h5" stroke="#c3ef7a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <div><div class="text-[22px] font-black leading-none tracking-[-.06em]">SAMPLE<span class="text-[#c3ef7a]">/ONE</span></div><p class="eyebrow mt-1.5">Capture · crop · chop</p></div>
-      </div>
-    <nav class="seg tabs" role="tablist" aria-label="Workstation views">
-      <button id="tab-capture" role="tab" aria-selected="true" aria-controls="view-capture" class="active" type="button">Capture</button>
-      <button id="tab-editor" role="tab" aria-selected="false" aria-controls="view-editor" tabindex="-1" type="button">Editor</button>
-      <button id="tab-chop" role="tab" aria-selected="false" aria-controls="view-chop" tabindex="-1" type="button">Chop</button>
-      <button id="tab-play" role="tab" aria-selected="false" aria-controls="view-play" tabindex="-1" type="button">Play</button>
-    </nav>
-      <div class="flex items-center gap-3"><span class="hidden text-[11px] text-[#728287] sm:inline">LOCAL AUDIO WORKSTATION</span><span id="sourceBadge" class="pill"><span class="dot"></span><span id="sourceLabel">Source disconnected</span></span></div>
-    </header>
-
-
-    <section id="view-capture" role="tabpanel" aria-labelledby="tab-capture" class="panel mb-5 p-4 sm:p-5" aria-label="Audio capture">
-      <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-        <div><div class="eyebrow mb-2">01 / SOURCE</div><h1 class="text-[18px] font-extrabold tracking-[-.03em] sm:text-[21px]">Capture sound from anywhere.</h1><p class="mt-1 max-w-[670px] text-[12px] leading-5 text-[#92a3a6]">Choose a Chrome tab (YouTube / Spotify Web), an audio device, or import an existing recording. Browser sharing requires your permission.</p></div>
-        <div class="flex flex-wrap items-center gap-2">
-          <button id="connectTab" class="btn btn-primary" type="button"><svg class="h-4 w-4 fill-none stroke-current stroke-[1.8]"><use href="#ic-monitor"/></svg>Share tab / screen</button>
-          <button id="connectInput" class="btn" type="button"><svg class="h-4 w-4 fill-none stroke-current stroke-[1.8]"><use href="#ic-mic"/></svg>Audio input</button>
-          <button id="disconnect" class="btn btn-quiet" disabled type="button">Disconnect</button>
-        </div>
-      </div>
-      <div class="mt-4 flex flex-col gap-3 border-t border-[#303a3e] pt-4 md:flex-row md:items-center md:justify-between md:gap-6">
-        <div class="flex w-full min-w-0 flex-1 items-center gap-3"><span class="eyebrow shrink-0">INPUT LEVEL</span><div class="meter w-full"><div id="levelFill"></div></div><span class="time w-11 shrink-0 text-right text-[11px] text-[#a5b5b8]" id="dbLevel">— dB</span></div>
-        <select id="inputDevices" class="field hidden md:max-w-[275px]" aria-label="Audio input device"></select>
-        <span id="inputHint" class="text-[11px] text-[#75878b] md:text-right">Nothing connected · all processing stays on this device</span>
-      </div>
-      <div class="mt-4 flex flex-wrap items-center gap-3" id="capture-actions"></div>
-    </section>
-
-    <main id="view-editor" role="tabpanel" aria-labelledby="tab-editor" hidden>
-        <section id="wave-panel" class="panel p-4 sm:p-6" aria-label="Sample waveform editor">
-          <div class="transport-bar" aria-label="Playback and waveform controls">
-            <div class="transport-actions"><button id="importBtn" class="btn btn-quiet" type="button"><svg class="h-4 w-4 fill-none stroke-current stroke-[1.8]"><use href="#ic-upload"/></svg>Import</button><button id="exampleBtn" class="btn btn-quiet" type="button">Example</button><button id="recordBtn" class="btn btn-record min-w-[135px]" type="button" disabled><svg class="h-[14px] w-[14px]"><use href="#ic-record"/></svg><span id="recordLabel">Record sample</span></button><button id="playBtn" class="btn transport-icon" type="button" title="Play all" aria-label="Play all" disabled><svg aria-hidden="true"><use href="#ic-play"/></svg></button><button id="playSelectionBtn" class="btn btn-quiet transport-icon" type="button" title="Play selection" aria-label="Play selection" disabled><svg aria-hidden="true"><use href="#ic-selection-play"/></svg></button><button id="stopBtn" class="btn btn-quiet transport-icon" type="button" title="Stop" aria-label="Stop" disabled><svg aria-hidden="true"><use href="#ic-stop"/></svg></button><button id="loopBtn" class="btn btn-quiet btn-loop transport-icon" type="button" title="Loop" aria-label="Loop" aria-pressed="false"><svg aria-hidden="true"><use href="#ic-loop"/></svg></button><button id="exportBtn" class="btn btn-quiet transport-icon" type="button" title="Export WAV" aria-label="Export WAV" disabled><svg aria-hidden="true"><use href="#ic-download"/></svg></button></div>
-            <div class="transport-bpm"><label for="bpm" class="eyebrow">BPM</label><input id="bpm" class="field time-field" type="number" min="40" max="240" step="0.1" value="120" aria-label="Tempo in beats per minute"/><button id="tempoSpeedToggle" class="btn btn-quiet btn-sm btn-loop transport-icon" type="button" title="Change audio speed when BPM changes" aria-label="Change audio speed when BPM changes" aria-pressed="false"><svg aria-hidden="true"><use href="#ic-speed"/></svg></button><button id="detectBpm" class="btn btn-quiet btn-sm transport-icon" type="button" title="Detect BPM" aria-label="Detect BPM" disabled><svg aria-hidden="true"><use href="#ic-detect"/></svg></button></div>
-            <div class="transport-zoom"><label for="zoom" class="eyebrow">ZOOM</label><input id="zoom" type="range" min="1" max="16" step="1" value="1" disabled/><span id="zoomLabel" class="time text-[11px]">1×</span></div>
-            <div class="transport-stats"><div class="stat" title="Duration" aria-label="Duration"><svg class="stat-icon" aria-hidden="true"><use href="#ic-clock"/></svg><div id="durationStat" class="time font-bold">0.00 s</div></div><div class="stat" title="Selection start" aria-label="Selection start"><svg class="stat-icon" aria-hidden="true"><use href="#ic-start"/></svg><div id="startStat" class="time font-bold">0.00 s</div></div><div class="stat" title="Selection end" aria-label="Selection end"><svg class="stat-icon" aria-hidden="true"><use href="#ic-end"/></svg><div id="endStat" class="time font-bold">0.00 s</div></div><div class="stat" title="Selected duration" aria-label="Selected duration"><svg class="stat-icon" aria-hidden="true"><use href="#ic-range"/></svg><div id="rangeStat" class="time font-bold text-[#c3ef7a]">0.00 s</div></div></div>
-            <span id="recMessage" class="text-[11px] text-[#90a1a4]">Connect a source to record</span><span id="counter" class="time text-[18px] font-bold">00:00.00</span>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0c1114" />
+    <title>SAMPLE/ONE — Audio Sampler</title>
+    <meta
+      name="description"
+      content="A minimal one-sample audio workstation. Capture a browser tab or input, edit waveforms, chop slices and export WAV."
+    />
+    <link rel="canonical" href="https://ruhlab.github.io/sample-one/" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+    <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SAMPLE/ONE" />
+    <meta property="og:title" content="SAMPLE/ONE — Audio Sampler" />
+    <meta
+      property="og:description"
+      content="Capture, edit and chop audio, build an FX chain, and play slices in your browser."
+    />
+    <meta property="og:url" content="https://ruhlab.github.io/sample-one/" />
+    <meta
+      property="og:image"
+      content="https://ruhlab.github.io/sample-one/social-card.png?v=2"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="SAMPLE/ONE — Capture, Edit, Chop, Play"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SAMPLE/ONE — Audio Sampler" />
+    <meta
+      name="twitter:description"
+      content="Capture, edit and chop audio, build an FX chain, and play slices in your browser."
+    />
+    <meta
+      name="twitter:image"
+      content="https://ruhlab.github.io/sample-one/social-card.png?v=2"
+    />
+    <link rel="stylesheet" href="./styles/app.css" />
+  </head>
+  <body>
+    <svg
+      style="position: absolute; width: 0; height: 0; overflow: hidden"
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <symbol id="ic-play" viewBox="0 0 24 24">
+        <path
+          d="M8 5 19 12 8 19V5Z"
+          fill="currentColor"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linejoin="round"
+        />
+      </symbol>
+      <symbol id="ic-selection-play" viewBox="0 0 24 24">
+        <path d="M4 5v14M20 5v14M9 7l7 5-7 5z" />
+      </symbol>
+      <symbol id="ic-loop" viewBox="0 0 24 24">
+        <path
+          d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4m14-1v2a3 3 0 0 1-3 3H3"
+        />
+      </symbol>
+      <symbol id="ic-detect" viewBox="0 0 24 24">
+        <circle cx="10" cy="10" r="6" />
+        <path d="m14.5 14.5 5 5M7 10h2l1-3 2 6 1-3h1" />
+      </symbol>
+      <symbol id="ic-speed" viewBox="0 0 24 24">
+        <path d="M4 18a9 9 0 1 1 16 0M12 13l4-5M7 18h10" />
+        <circle cx="12" cy="13" r="1" />
+      </symbol>
+      <symbol id="ic-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 2" />
+      </symbol>
+      <symbol id="ic-start" viewBox="0 0 24 24">
+        <path d="M5 5v14M19 12H8m0 0 4-4m-4 4 4 4" />
+      </symbol>
+      <symbol id="ic-end" viewBox="0 0 24 24">
+        <path d="M19 5v14M5 12h11m0 0-4-4m4 4-4 4" />
+      </symbol>
+      <symbol id="ic-range" viewBox="0 0 24 24">
+        <path d="M5 5v14m14-14v14M8 12h8m-8 0 3-3m-3 3 3 3m5-3-3-3m3 3-3 3" />
+      </symbol>
+      <symbol id="ic-stop" viewBox="0 0 24 24">
+        <rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor" />
+      </symbol>
+      <symbol id="ic-record" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" fill="currentColor" />
+      </symbol>
+      <symbol id="ic-upload" viewBox="0 0 24 24">
+        <path
+          d="M12 16V3m0 0L7 8m5-5 5 5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"
+        />
+      </symbol>
+      <symbol id="ic-download" viewBox="0 0 24 24">
+        <path d="M12 3v13m0 0 5-5m-5 5-5-5M4 18v3h16v-3" />
+      </symbol>
+      <symbol id="ic-cut" viewBox="0 0 24 24">
+        <circle cx="6" cy="6" r="3" />
+        <circle cx="6" cy="18" r="3" />
+        <path d="M8.5 8.5 20 20M14 10l6-6M8.5 15.5 11 13" />
+      </symbol>
+      <symbol id="ic-mic" viewBox="0 0 24 24">
+        <rect x="9" y="3" width="6" height="12" rx="3" />
+        <path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3m-4 0h8" />
+      </symbol>
+      <symbol id="ic-monitor" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="13" rx="2" />
+        <path d="M8 21h8m-4-4v4" />
+      </symbol>
+      <symbol id="ic-undo" viewBox="0 0 24 24">
+        <path d="m9 14-6-5 6-5M3 9h10a8 8 0 0 1 0 16" />
+      </symbol>
+      <symbol id="ic-trash" viewBox="0 0 24 24">
+        <path d="M4 7h16m-14 0 1 14h10l1-14M9 7V4h6v3M10 11v7m4-7v7" />
+      </symbol>
+      <symbol id="ic-power" viewBox="0 0 24 24">
+        <path d="M12 3v9M6.5 6.5a8 8 0 1 0 11 0" />
+      </symbol>
+      <symbol id="ic-reset" viewBox="0 0 24 24">
+        <path d="M4 10a8 8 0 1 1 2 7M4 4v6h6" />
+      </symbol>
+      <symbol id="ic-skip" viewBox="0 0 24 24">
+        <path d="m5 5 12 7-12 7V5m13 0v14" />
+      </symbol>
+    </svg>
+    <div
+      class="app-container mx-auto w-full max-w-[1530px] px-4 pb-10 sm:px-7 lg:px-10"
+    >
+      <header class="mb-7 app-header">
+        <div class="flex items-center gap-3">
+          <div
+            class="flex h-10 w-10 items-center justify-center rounded-xl border border-[#536840] bg-[#273426]"
+            aria-hidden="true"
+          >
+            <svg width="25" height="25" viewBox="0 0 25 25" fill="none">
+              <path
+                d="M2 12.5h3l2.5-8 4.5 16L16 7l2 5.5h5"
+                stroke="#c3ef7a"
+                stroke-width="2.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
           </div>
-          <div class="wave-shell"><canvas id="waveCanvas" aria-label="Audio waveform. Drag to select a region, click to set the playhead, double click to select all."></canvas><div id="emptyWave" class="wave-empty"><div class="mb-1 rounded-xl border border-[#3b4c4b] bg-[#22312c] p-3 text-[#c3ef7a]"><svg class="h-7 w-7 fill-none stroke-current stroke-[1.6]"><use href="#ic-cut"/></svg></div><div class="text-[15px] font-bold text-[#c6d7d0]">Your waveform starts here</div><div class="max-w-[330px] text-[12px] leading-5 text-[#6d8587]">Connect a source and record, or drop an audio file onto the page.</div></div></div>
-          <div class="wave-meta"><p>Drag to select or move markers · Click to move playhead · Double-click to select all</p><span id="formatLabel">No audio loaded</span></div>
-          <div class="mt-2"><input id="viewScroll" type="range" min="0" max="1000" step="1" value="0" class="hidden" aria-label="Scroll waveform timeline"/></div>
-        </section>
-      <div class="editor-cards mt-5">
-          <section class="panel" aria-label="Edit controls">
-            <div class="editor-columns"><div class="editor-actions"><div class="control-label">Actions</div>
-            <div class="control-row mt-2">
-              <label><span class="control-label">Sample name</span><input id="sampleName" class="field sample-field" maxlength="65" value="Untitled sample"/></label>
-              <label><span class="control-label">Start (s)</span><input id="selectionStart" class="field time-field" type="number" step="0.001" min="0" disabled/></label>
-              <label><span class="control-label">End (s)</span><input id="selectionEnd" class="field time-field" type="number" step="0.001" min="0" disabled/></label>
-              <div class="control-group"><button id="inBtn" class="btn btn-quiet btn-sm" type="button" disabled>IN at cursor</button><button id="outBtn" class="btn btn-quiet btn-sm" type="button" disabled>OUT at cursor</button><button id="allBtn" class="btn btn-quiet btn-sm" type="button" disabled>Select all</button></div>
+          <div>
+            <div class="text-[22px] font-black leading-none tracking-[-.06em]">
+              SAMPLE<span class="text-[#c3ef7a]">/ONE</span>
             </div>
-            <details class="editor-section" open><summary class="control-label">Sound position</summary><div class="control-group mt-2"><label><span class="control-label">Timeline length (s)</span><input id="timelineLength" class="field time-field" type="number" min="0.01" max="180" step="0.001" disabled/></label><label><span class="control-label">Sound start (s)</span><input id="soundStart" class="field time-field" type="number" step="0.001" disabled/></label><label><span class="control-label">Sound length (s)</span><input id="soundLength" class="field time-field" type="number" min="0.015" step="0.001" disabled/></label><span class="text-[11px] text-[#8da0a3]">Drag the sound bar to move it; drag either edge to stretch.</span></div></details>
-            <details class="editor-section" open><summary class="control-label">Edit selection</summary><div class="control-group mt-2"><button id="cropBtn" class="btn btn-primary btn-sm" type="button" disabled>Crop</button><button id="deleteBtn" class="btn btn-quiet btn-sm" type="button" disabled>Delete</button><button id="reverseBtn" class="btn btn-quiet btn-sm" type="button" disabled>Reverse</button><button id="silenceBtn" class="btn btn-quiet btn-sm" type="button" disabled>Silence</button><button id="normalizeBtn" class="btn btn-quiet btn-sm" type="button" disabled title="Normalize the entire sample">Normalize sample</button><button id="undoBtn" class="btn btn-quiet btn-sm" type="button" disabled>Undo</button><button id="exportSelectionBtn" class="btn btn-quiet btn-sm" type="button" disabled>Export selection WAV</button></div></details>
-            <details class="editor-section"><summary class="control-label">5-band EQ</summary><div class="editor-settings"><div class="control-label" style="flex-basis:100%">Low shelf</div><div class="fx-param"><label for="eqLowFreq">Frequency (Hz)</label><div class="fx-param-controls"><input id="eqLowFreqSlider" type="range" min="20" max="20000" step="any" value="100" aria-label="Low shelf Frequency (Hz) slider"/><input id="eqLowFreq" class="field" type="number" min="20" max="20000" step="1" value="100" aria-label="Low shelf Frequency (Hz) value"/></div></div><div class="fx-param"><label for="eqLowGain">Gain (dB)</label><div class="fx-param-controls"><input id="eqLowGainSlider" type="range" min="-24" max="24" step="any" value="0" aria-label="Low shelf Gain (dB) slider"/><input id="eqLowGain" class="field" type="number" min="-24" max="24" step="0.1" value="0" aria-label="Low shelf Gain (dB) value"/></div></div><div class="control-label" style="flex-basis:100%">Low mid</div><div class="fx-param"><label for="eqLowMidFreq">Frequency (Hz)</label><div class="fx-param-controls"><input id="eqLowMidFreqSlider" type="range" min="20" max="20000" step="any" value="350" aria-label="Low mid Frequency (Hz) slider"/><input id="eqLowMidFreq" class="field" type="number" min="20" max="20000" step="1" value="350" aria-label="Low mid Frequency (Hz) value"/></div></div><div class="fx-param"><label for="eqLowMidGain">Gain (dB)</label><div class="fx-param-controls"><input id="eqLowMidGainSlider" type="range" min="-24" max="24" step="any" value="0" aria-label="Low mid Gain (dB) slider"/><input id="eqLowMidGain" class="field" type="number" min="-24" max="24" step="0.1" value="0" aria-label="Low mid Gain (dB) value"/></div></div><div class="fx-param"><label for="eqLowMidQ">Q</label><div class="fx-param-controls"><input id="eqLowMidQSlider" type="range" min="0.1" max="20" step="any" value="1" aria-label="Low mid Q slider"/><input id="eqLowMidQ" class="field" type="number" min="0.1" max="20" step="0.1" value="1" aria-label="Low mid Q value"/></div></div><div class="control-label" style="flex-basis:100%">Mid</div><div class="fx-param"><label for="eqMidFreq">Frequency (Hz)</label><div class="fx-param-controls"><input id="eqMidFreqSlider" type="range" min="20" max="20000" step="any" value="1000" aria-label="Mid Frequency (Hz) slider"/><input id="eqMidFreq" class="field" type="number" min="20" max="20000" step="1" value="1000" aria-label="Mid Frequency (Hz) value"/></div></div><div class="fx-param"><label for="eqMidGain">Gain (dB)</label><div class="fx-param-controls"><input id="eqMidGainSlider" type="range" min="-24" max="24" step="any" value="0" aria-label="Mid Gain (dB) slider"/><input id="eqMidGain" class="field" type="number" min="-24" max="24" step="0.1" value="0" aria-label="Mid Gain (dB) value"/></div></div><div class="fx-param"><label for="eqMidQ">Q</label><div class="fx-param-controls"><input id="eqMidQSlider" type="range" min="0.1" max="20" step="any" value="1" aria-label="Mid Q slider"/><input id="eqMidQ" class="field" type="number" min="0.1" max="20" step="0.1" value="1" aria-label="Mid Q value"/></div></div><div class="control-label" style="flex-basis:100%">High mid</div><div class="fx-param"><label for="eqHighMidFreq">Frequency (Hz)</label><div class="fx-param-controls"><input id="eqHighMidFreqSlider" type="range" min="20" max="20000" step="any" value="4000" aria-label="High mid Frequency (Hz) slider"/><input id="eqHighMidFreq" class="field" type="number" min="20" max="20000" step="1" value="4000" aria-label="High mid Frequency (Hz) value"/></div></div><div class="fx-param"><label for="eqHighMidGain">Gain (dB)</label><div class="fx-param-controls"><input id="eqHighMidGainSlider" type="range" min="-24" max="24" step="any" value="0" aria-label="High mid Gain (dB) slider"/><input id="eqHighMidGain" class="field" type="number" min="-24" max="24" step="0.1" value="0" aria-label="High mid Gain (dB) value"/></div></div><div class="fx-param"><label for="eqHighMidQ">Q</label><div class="fx-param-controls"><input id="eqHighMidQSlider" type="range" min="0.1" max="20" step="any" value="1" aria-label="High mid Q slider"/><input id="eqHighMidQ" class="field" type="number" min="0.1" max="20" step="0.1" value="1" aria-label="High mid Q value"/></div></div><div class="control-label" style="flex-basis:100%">High shelf</div><div class="fx-param"><label for="eqHighFreq">Frequency (Hz)</label><div class="fx-param-controls"><input id="eqHighFreqSlider" type="range" min="20" max="20000" step="any" value="10000" aria-label="High shelf Frequency (Hz) slider"/><input id="eqHighFreq" class="field" type="number" min="20" max="20000" step="1" value="10000" aria-label="High shelf Frequency (Hz) value"/></div></div><div class="fx-param"><label for="eqHighGain">Gain (dB)</label><div class="fx-param-controls"><input id="eqHighGainSlider" type="range" min="-24" max="24" step="any" value="0" aria-label="High shelf Gain (dB) slider"/><input id="eqHighGain" class="field" type="number" min="-24" max="24" step="0.1" value="0" aria-label="High shelf Gain (dB) value"/></div></div><button id="eqApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable EQ</button><button id="eqResetBtn" class="btn btn-quiet btn-sm" type="button" disabled>Reset EQ</button></div></details>
-            <details class="editor-section"><summary class="control-label">Quality / resample</summary><div class="editor-settings"><label>Sample rate (Hz)<select id="resampleRate" class="field"><option value="4000">4000</option><option value="5000">5000</option><option value="6000">6000</option><option value="7350">7350</option><option value="8000">8000</option><option value="10000">10000</option><option value="11025">11025</option><option value="12000">12000</option><option value="12500">12500</option><option value="16000">16000</option><option value="22050">22050</option><option value="24000">24000</option><option value="31250">31250</option><option value="32000">32000</option><option value="44100" selected>44100</option><option value="48000">48000</option><option value="88200">88200</option><option value="96000">96000</option></select></label><label>Quality<select id="resampleQuality" class="field"><option value="16">Standard</option><option value="32" selected>High</option><option value="64">Best</option></select></label><button id="qualityApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable resampling</button><button id="qualityResetBtn" class="btn btn-quiet btn-sm" type="button" title="Reset resampling; WAV format and channels stay unchanged" disabled>Reset quality</button><label>WAV export<select id="exportDepth" class="field"><option value="8">8-bit PCM</option><option value="16" selected>16-bit PCM</option><option value="24">24-bit PCM</option><option value="32">32-bit float</option></select></label><label>Channels<select id="exportChannels" class="field"><option value="original">Original</option><option value="mono">Mono</option></select></label></div><p class="text-[11px] text-[#8da0a3] mt-2">Enable resampling and apply the chain to set the WAV rate; format and channels apply to all downloads. Live FX run at the playback device rate.</p></details>
-            </div><div class="editor-fx"><div class="fx-header"><div class="control-label">FX</div><button id="fxResetBtn" class="btn btn-quiet btn-sm" type="button" title="Reset effects to the original sound" disabled>Reset</button></div>
-            <details class="editor-section"><summary class="control-label">Pitch</summary><div class="editor-settings"><div class="fx-param"><label for="pitchSemitones">Semitones</label><div class="fx-param-controls"><input id="pitchSemitonesSlider" type="range" min="-12" max="12" step="any" value="0" aria-label="Semitones slider"/><input id="pitchSemitones" class="field" type="number" min="-12" max="12" step="1" value="0" aria-label="Semitones value"/></div></div><div class="fx-param"><label for="pitchCents">Cents</label><div class="fx-param-controls"><input id="pitchCentsSlider" type="range" min="-100" max="100" step="any" value="0" aria-label="Cents slider"/><input id="pitchCents" class="field" type="number" min="-100" max="100" step="1" value="0" aria-label="Cents value"/></div></div><button id="pitchApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable</button></div></details>
-            <details class="editor-section"><summary class="control-label">Reverb</summary><div class="editor-settings"><label>Type<select id="reverbType" class="field" aria-label="Reverb type"><option value="room">Room</option><option value="hall" selected>Hall</option><option value="chamber">Chamber</option><option value="plate">Plate</option></select></label><div class="fx-param"><label for="reverbDecay">Decay (s)</label><div class="fx-param-controls"><input id="reverbDecaySlider" type="range" min="0.1" max="8" step="any" value="1.5" aria-label="Decay slider"/><input id="reverbDecay" class="field" type="number" min="0.1" max="8" step="0.1" value="1.5" aria-label="Decay value"/></div></div><div class="fx-param"><label for="reverbPredelay">Pre-delay (ms)</label><div class="fx-param-controls"><input id="reverbPredelaySlider" type="range" min="0" max="250" step="any" value="20" aria-label="Pre-delay slider"/><input id="reverbPredelay" class="field" type="number" min="0" max="250" step="1" value="20" aria-label="Pre-delay value"/></div></div><div class="fx-param"><label for="reverbTone">Tone (Hz)</label><div class="fx-param-controls"><input id="reverbToneSlider" type="range" min="200" max="20000" step="any" value="6000" aria-label="Tone slider"/><input id="reverbTone" class="field" type="number" min="200" max="20000" step="100" value="6000" aria-label="Tone value"/></div></div><div class="fx-param"><label for="reverbMix">Mix (%)</label><div class="fx-param-controls"><input id="reverbMixSlider" type="range" min="0" max="100" step="any" value="30" aria-label="Mix slider"/><input id="reverbMix" class="field" type="number" min="0" max="100" step="1" value="30" aria-label="Mix value"/></div></div><button id="reverbApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable</button></div></details>
-            <details class="editor-section"><summary class="control-label">Delay</summary><div class="editor-settings"><label>Type<select id="delayType" class="field" aria-label="Delay type"><option value="digital">Digital</option><option value="analog">Analog</option><option value="tape">Tape</option><option value="pingpong">Ping-pong</option></select></label><div class="fx-param"><label for="delayTime">Time (ms)</label><div class="fx-param-controls"><input id="delayTimeSlider" type="range" min="1" max="2000" step="any" value="250" aria-label="Time slider"/><input id="delayTime" class="field" type="number" min="1" max="2000" step="1" value="250" aria-label="Time value"/></div></div><div class="fx-param"><label for="delayFeedback">Feedback (%)</label><div class="fx-param-controls"><input id="delayFeedbackSlider" type="range" min="0" max="90" step="any" value="35" aria-label="Feedback slider"/><input id="delayFeedback" class="field" type="number" min="0" max="90" step="1" value="35" aria-label="Feedback value"/></div></div><div class="fx-param"><label for="delayTone">Tone (Hz)</label><div class="fx-param-controls"><input id="delayToneSlider" type="range" min="200" max="20000" step="any" value="6000" aria-label="Tone slider"/><input id="delayTone" class="field" type="number" min="200" max="20000" step="100" value="6000" aria-label="Tone value"/></div></div><div class="fx-param"><label for="delayMix">Mix (%)</label><div class="fx-param-controls"><input id="delayMixSlider" type="range" min="0" max="100" step="any" value="30" aria-label="Mix slider"/><input id="delayMix" class="field" type="number" min="0" max="100" step="1" value="30" aria-label="Mix value"/></div></div><button id="delayApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable</button></div></details>
-            <details class="editor-section"><summary class="control-label">Distortion</summary><div class="editor-settings"><label>Type<select id="distType" class="field"><option value="soft">Soft saturation</option><option value="hard">Hard clip</option><option value="fold">Wavefold</option><option value="crusher">Bitcrusher</option></select></label><div class="fx-param"><label for="distDrive">Drive (dB)</label><div class="fx-param-controls"><input id="distDriveSlider" type="range" min="0" max="36" step="any" value="6" aria-label="Drive slider"/><input id="distDrive" class="field" type="number" min="0" max="36" step="1" value="6" aria-label="Drive value"/></div></div><div class="fx-param"><label for="distTone">Tone (Hz)</label><div class="fx-param-controls"><input id="distToneSlider" type="range" min="200" max="20000" step="any" value="12000" aria-label="Tone slider"/><input id="distTone" class="field" type="number" min="200" max="20000" step="100" value="12000" aria-label="Tone value"/></div></div><div class="fx-param"><label for="distBits">Resolution (bits)</label><div class="fx-param-controls"><input id="distBitsSlider" type="range" min="2" max="16" step="any" value="8" aria-label="Resolution slider"/><input id="distBits" class="field" type="number" min="2" max="16" step="1" value="8" aria-label="Resolution value"/></div></div><div class="fx-param"><label for="distDownsample">Downsample (×)</label><div class="fx-param-controls"><input id="distDownsampleSlider" type="range" min="1" max="32" step="any" value="1" aria-label="Downsample slider"/><input id="distDownsample" class="field" type="number" min="1" max="32" step="1" value="1" aria-label="Downsample value"/></div></div><div class="fx-param"><label for="distMix">Mix (%)</label><div class="fx-param-controls"><input id="distMixSlider" type="range" min="0" max="100" step="any" value="50" aria-label="Mix slider"/><input id="distMix" class="field" type="number" min="0" max="100" step="1" value="50" aria-label="Mix value"/></div></div><button id="distortionApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable</button></div></details>
-            <details class="editor-section"><summary class="control-label">Compressor</summary><div class="editor-settings"><label>Type<select id="compType" class="field" aria-label="Compressor type"><option value="clean">Clean</option><option value="vca">VCA style</option><option value="variablemu">Variable Mu (tube) style</option><option value="digital">Digital / Transparent</option><option value="multiband">Multiband</option><option value="opto">Opto style</option><option value="fet">FET style</option><option value="vinyl303">Vinyl Sim · 303 inspired</option></select></label><div class="fx-param" data-comp-mode="single"><label for="compThreshold">Threshold (dB)</label><div class="fx-param-controls"><input id="compThresholdSlider" type="range" min="-100" max="0" step="any" value="-24" aria-label="Threshold slider"/><input id="compThreshold" class="field" type="number" min="-100" max="0" step="1" value="-24" aria-label="Threshold value"/></div></div><div class="fx-param" data-comp-mode="general"><label for="compRatio">Ratio (:1)</label><div class="fx-param-controls"><input id="compRatioSlider" type="range" min="1" max="20" step="any" value="4" aria-label="Ratio slider"/><input id="compRatio" class="field" type="number" min="1" max="20" step="0.5" value="4" aria-label="Ratio value"/></div></div><div class="fx-param" data-comp-mode="general"><label for="compKnee">Knee (dB)</label><div class="fx-param-controls"><input id="compKneeSlider" type="range" min="0" max="40" step="any" value="12" aria-label="Knee slider"/><input id="compKnee" class="field" type="number" min="0" max="40" step="1" value="12" aria-label="Knee value"/></div></div><div class="fx-param" data-comp-mode="general"><label for="compAttack">Attack (ms)</label><div class="fx-param-controls"><input id="compAttackSlider" type="range" min="0" max="1000" step="any" value="10" aria-label="Attack slider"/><input id="compAttack" class="field" type="number" min="0" max="1000" step="1" value="10" aria-label="Attack value"/></div></div><div class="fx-param" data-comp-mode="general"><label for="compRelease">Release (ms)</label><div class="fx-param-controls"><input id="compReleaseSlider" type="range" min="0" max="1000" step="any" value="100" aria-label="Release slider"/><input id="compRelease" class="field" type="number" min="0" max="1000" step="1" value="100" aria-label="Release value"/></div></div><div class="fx-param" data-comp-mode="general"><label for="compMakeup">Makeup (dB)</label><div class="fx-param-controls"><input id="compMakeupSlider" type="range" min="0" max="24" step="any" value="0" aria-label="Makeup slider"/><input id="compMakeup" class="field" type="number" min="0" max="24" step="1" value="0" aria-label="Makeup value"/></div></div><div class="fx-param" data-comp-mode="multiband" hidden><label for="compLowThreshold">Low threshold (dB)</label><div class="fx-param-controls"><input id="compLowThresholdSlider" type="range" min="-100" max="0" step="any" value="-24" aria-label="Low threshold slider"/><input id="compLowThreshold" class="field" type="number" min="-100" max="0" step="1" value="-24" aria-label="Low threshold value"/></div></div><div class="fx-param" data-comp-mode="multiband" hidden><label for="compMidThreshold">Mid threshold (dB)</label><div class="fx-param-controls"><input id="compMidThresholdSlider" type="range" min="-100" max="0" step="any" value="-24" aria-label="Mid threshold slider"/><input id="compMidThreshold" class="field" type="number" min="-100" max="0" step="1" value="-24" aria-label="Mid threshold value"/></div></div><div class="fx-param" data-comp-mode="multiband" hidden><label for="compHighThreshold">High threshold (dB)</label><div class="fx-param-controls"><input id="compHighThresholdSlider" type="range" min="-100" max="0" step="any" value="-24" aria-label="High threshold slider"/><input id="compHighThreshold" class="field" type="number" min="-100" max="0" step="1" value="-24" aria-label="High threshold value"/></div></div><div class="fx-param" data-comp-mode="multiband" hidden><label for="compLowCross">Low crossover (Hz)</label><div class="fx-param-controls"><input id="compLowCrossSlider" type="range" min="40" max="1000" step="any" value="250" aria-label="Low crossover slider"/><input id="compLowCross" class="field" type="number" min="40" max="1000" step="10" value="250" aria-label="Low crossover value"/></div></div><div class="fx-param" data-comp-mode="multiband" hidden><label for="compHighCross">High crossover (Hz)</label><div class="fx-param-controls"><input id="compHighCrossSlider" type="range" min="1000" max="12000" step="any" value="2500" aria-label="High crossover slider"/><input id="compHighCross" class="field" type="number" min="1000" max="12000" step="100" value="2500" aria-label="High crossover value"/></div></div><div class="fx-param" data-comp-mode="vinyl303" hidden><label for="vinylComp">Comp (%)</label><div class="fx-param-controls"><input id="vinylCompSlider" type="range" min="0" max="100" step="any" value="60" aria-label="Comp slider"/><input id="vinylComp" class="field" type="number" min="0" max="100" step="1" value="60" aria-label="Comp value"/></div></div><div class="fx-param" data-comp-mode="vinyl303" hidden><label for="vinylNoise">Noise (%)</label><div class="fx-param-controls"><input id="vinylNoiseSlider" type="range" min="0" max="100" step="any" value="0" aria-label="Noise slider"/><input id="vinylNoise" class="field" type="number" min="0" max="100" step="1" value="0" aria-label="Noise value"/></div></div><div class="fx-param" data-comp-mode="vinyl303" hidden><label for="vinylWow">Wow / flutter (%)</label><div class="fx-param-controls"><input id="vinylWowSlider" type="range" min="0" max="100" step="any" value="0" aria-label="Wow / flutter slider"/><input id="vinylWow" class="field" type="number" min="0" max="100" step="1" value="0" aria-label="Wow / flutter value"/></div></div><div class="fx-param" data-comp-mode="vinyl303" hidden><label for="vinylLevel">Level (%)</label><div class="fx-param-controls"><input id="vinylLevelSlider" type="range" min="0" max="100" step="any" value="80" aria-label="Level slider"/><input id="vinylLevel" class="field" type="number" min="0" max="100" step="1" value="80" aria-label="Level value"/></div></div><div class="fx-param"><label for="compMix">Mix (%)</label><div class="fx-param-controls"><input id="compMixSlider" type="range" min="0" max="100" step="any" value="100" aria-label="Mix slider"/><input id="compMix" class="field" type="number" min="0" max="100" step="1" value="100" aria-label="Mix value"/></div></div><button id="compApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable</button></div></details>
-            <div class="control-group editor-section"><button id="fxApplyChainBtn" class="btn btn-primary btn-sm" type="button" disabled>Apply chain</button><button id="fxDiscardBtn" class="btn btn-quiet btn-sm" type="button" disabled>Discard changes</button></div><p class="text-[11px] text-[#8da0a3] mt-2">Use Play and Loop to audition effects on the whole sample, then apply once. Processing order: resampling → pitch / time → EQ → reverb → delay → distortion → compressor. Disable and apply effects to use destructive edits.</p>
-            </div></div>
-          </section>
-      </div>
-    </main>
-    <section id="view-chop" role="tabpanel" aria-labelledby="tab-chop" hidden>
-      <aside class="panel p-4 sm:p-6 chop-controls" aria-label="Slice controls">
-        <div class="chop-layout">
-          <div class="chop-options">
-            <div class="chop-group"><span class="control-label">Equal slices</span><div class="control-group"><button data-chops="2" class="btn btn-quiet btn-sm" type="button" disabled>2</button><button data-chops="4" class="btn btn-quiet btn-sm" type="button" disabled>4</button><button data-chops="8" class="btn btn-quiet btn-sm" type="button" disabled>8</button><button data-chops="16" class="btn btn-quiet btn-sm" type="button" disabled>16</button><input id="chopCount" class="field chop-count" type="number" min="2" max="128" value="12" aria-label="Custom slice count"/><button id="customChopsBtn" class="btn btn-quiet btn-sm" type="button" disabled>Slice</button></div></div>
-            <div class="chop-group"><label for="transientSensitivity" class="control-label">Transients · Sensitivity <span id="sensitivityValue">50%</span></label><div class="sensitivity"><input id="transientSensitivity" type="range" min="0" max="100" value="50" aria-label="Transient sensitivity"/></div><button id="transientBtn" class="btn btn-quiet btn-sm" type="button" disabled>Detect transients</button></div>
-            <div class="chop-group"><span class="control-label">Actions</span><div class="control-group"><button id="splitBtn" class="btn btn-quiet btn-sm" type="button" disabled>Split at cursor</button><button id="addSliceBtn" class="btn btn-primary btn-sm" type="button" disabled>Add selection</button><button id="clearSlicesBtn" class="btn btn-quiet btn-sm" type="button" disabled>Clear all</button><button id="exportZipBtn" class="btn btn-quiet btn-sm" type="button" disabled>Download ZIP</button><button id="chopUndoBtn" class="btn btn-quiet btn-sm" type="button" disabled>Undo</button></div></div>
-          </div>
-          <div class="chop-library"><span class="control-label">Slices · <span id="sliceCount">0</span></span>
-            <div id="sliceInspector" class="slice-inspector" hidden><div class="control-row"><label><span class="control-label">Start (s)</span><input id="sliceStart" class="field time-field" type="number" min="0" step="0.001"/></label><label><span class="control-label">End (s)</span><input id="sliceEnd" class="field time-field" type="number" min="0" step="0.001"/></label><label><span class="control-label">Fade in (ms)</span><input id="sliceFadeIn" class="field time-field" type="number" min="0" step="1" value="0"/><input id="sliceFadeInSlider" type="range" min="0" max="5000" value="0" aria-label="Slice fade in"/></label><label><span class="control-label">Fade out (ms)</span><input id="sliceFadeOut" class="field time-field" type="number" min="0" step="1" value="0"/><input id="sliceFadeOutSlider" type="range" min="0" max="5000" value="0" aria-label="Slice fade out"/></label><button id="auditionSliceBtn" class="btn btn-quiet btn-sm" type="button">Play slice</button></div><p class="text-[11px] text-[#8da0a3] mt-2">Shared boundaries move together.</p></div>
-            <div id="slices" class="slice-list" aria-live="polite"></div>
+            <p class="eyebrow mt-1.5">Capture · crop · chop</p>
           </div>
         </div>
-      </aside>
-    </section>
-    <section id="view-play" role="tabpanel" aria-labelledby="tab-play" class="panel p-4 sm:p-6" hidden>
-      <div id="pad-grid" class="pad-grid"></div>
-      <div class="play-controls"><button id="bank-prev" class="btn btn-quiet btn-sm" type="button">Previous</button><span id="bank-label" class="time text-[12px]"></span><button id="bank-next" class="btn btn-quiet btn-sm" type="button">Next</button><button id="pads-stop" class="btn btn-quiet btn-sm" type="button">Stop all</button></div>
-    </section>
-    <footer class="mt-6 flex flex-wrap justify-between gap-3 text-[11px] leading-5 text-[#6e8488]"><span>100% client-side audio processing · No account, upload, or server-side storage</span><span>Chrome / Edge recommended for tab audio · Desktop capture depends on browser &amp; OS</span></footer>
-  </div>
-  <input id="fileInput" type="file" accept="audio/*,.wav,.mp3,.ogg,.flac,.m4a,.webm" hidden />
-  <div id="dropOverlay" class="drop-overlay">Drop audio to edit</div>
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="./main.ts"></script>
-</body>
+        <nav class="seg tabs" role="tablist" aria-label="Workstation views">
+          <button
+            id="tab-capture"
+            role="tab"
+            aria-selected="true"
+            aria-controls="view-capture"
+            class="active"
+            type="button"
+          >
+            Capture
+          </button>
+          <button
+            id="tab-editor"
+            role="tab"
+            aria-selected="false"
+            aria-controls="view-editor"
+            tabindex="-1"
+            type="button"
+          >
+            Editor
+          </button>
+          <button
+            id="tab-chop"
+            role="tab"
+            aria-selected="false"
+            aria-controls="view-chop"
+            tabindex="-1"
+            type="button"
+          >
+            Chop
+          </button>
+          <button
+            id="tab-play"
+            role="tab"
+            aria-selected="false"
+            aria-controls="view-play"
+            tabindex="-1"
+            type="button"
+          >
+            Play
+          </button>
+        </nav>
+        <div class="flex items-center gap-3">
+          <span class="hidden text-[11px] text-[#728287] sm:inline"
+            >LOCAL AUDIO WORKSTATION</span
+          ><span id="sourceBadge" class="pill"
+            ><span class="dot"></span
+            ><span id="sourceLabel">Source disconnected</span></span
+          >
+        </div>
+      </header>
+
+      <section
+        id="view-capture"
+        role="tabpanel"
+        aria-labelledby="tab-capture"
+        class="panel mb-5 p-4 sm:p-5"
+        aria-label="Audio capture"
+      >
+        <div
+          class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between"
+        >
+          <div>
+            <div class="eyebrow mb-2">01 / SOURCE</div>
+            <h1
+              class="text-[18px] font-extrabold tracking-[-.03em] sm:text-[21px]"
+            >
+              Capture sound from anywhere.
+            </h1>
+            <p class="mt-1 max-w-[670px] text-[12px] leading-5 text-[#92a3a6]">
+              Choose a Chrome tab (YouTube / Spotify Web), an audio device, or
+              import an existing recording. Browser sharing requires your
+              permission.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="connectTab" class="btn btn-primary" type="button">
+              <svg class="h-4 w-4 fill-none stroke-current stroke-[1.8]">
+                <use href="#ic-monitor" /></svg
+              >Share tab / screen
+            </button>
+            <button id="connectInput" class="btn" type="button">
+              <svg class="h-4 w-4 fill-none stroke-current stroke-[1.8]">
+                <use href="#ic-mic" /></svg
+              >Audio input
+            </button>
+            <button
+              id="disconnect"
+              class="btn btn-quiet"
+              disabled
+              type="button"
+            >
+              Disconnect
+            </button>
+          </div>
+        </div>
+        <div
+          class="mt-4 flex flex-col gap-3 border-t border-[#303a3e] pt-4 md:flex-row md:items-center md:justify-between md:gap-6"
+        >
+          <div class="flex w-full min-w-0 flex-1 items-center gap-3">
+            <span class="eyebrow shrink-0">INPUT LEVEL</span>
+            <div class="meter w-full"><div id="levelFill"></div></div>
+            <span
+              class="time w-11 shrink-0 text-right text-[11px] text-[#a5b5b8]"
+              id="dbLevel"
+              >— dB</span
+            >
+          </div>
+          <select
+            id="inputDevices"
+            class="field hidden md:max-w-[275px]"
+            aria-label="Audio input device"
+          ></select>
+          <span id="inputHint" class="text-[11px] text-[#75878b] md:text-right"
+            >Nothing connected · all processing stays on this device</span
+          >
+        </div>
+        <div
+          class="mt-4 flex flex-wrap items-center gap-3"
+          id="capture-actions"
+        ></div>
+      </section>
+
+      <main
+        id="view-editor"
+        role="tabpanel"
+        aria-labelledby="tab-editor"
+        hidden
+      >
+        <section
+          id="wave-panel"
+          class="panel p-4 sm:p-6"
+          aria-label="Sample waveform editor"
+        >
+          <div
+            class="transport-bar"
+            aria-label="Playback and waveform controls"
+          >
+            <div class="transport-actions">
+              <button id="importBtn" class="btn btn-quiet" type="button">
+                <svg class="h-4 w-4 fill-none stroke-current stroke-[1.8]">
+                  <use href="#ic-upload" /></svg
+                >Import</button
+              ><button id="exampleBtn" class="btn btn-quiet" type="button">
+                Example</button
+              ><button
+                id="recordBtn"
+                class="btn btn-record min-w-[135px]"
+                type="button"
+                disabled
+              >
+                <svg class="h-[14px] w-[14px]"><use href="#ic-record" /></svg
+                ><span id="recordLabel">Record sample</span></button
+              ><button
+                id="playBtn"
+                class="btn transport-icon"
+                type="button"
+                title="Play all"
+                aria-label="Play all"
+                disabled
+              >
+                <svg aria-hidden="true"><use href="#ic-play" /></svg></button
+              ><button
+                id="playSelectionBtn"
+                class="btn btn-quiet transport-icon"
+                type="button"
+                title="Play selection"
+                aria-label="Play selection"
+                disabled
+              >
+                <svg aria-hidden="true">
+                  <use href="#ic-selection-play" />
+                </svg></button
+              ><button
+                id="stopBtn"
+                class="btn btn-quiet transport-icon"
+                type="button"
+                title="Stop"
+                aria-label="Stop"
+                disabled
+              >
+                <svg aria-hidden="true"><use href="#ic-stop" /></svg></button
+              ><button
+                id="loopBtn"
+                class="btn btn-quiet btn-loop transport-icon"
+                type="button"
+                title="Loop"
+                aria-label="Loop"
+                aria-pressed="false"
+              >
+                <svg aria-hidden="true"><use href="#ic-loop" /></svg></button
+              ><button
+                id="exportBtn"
+                class="btn btn-quiet transport-icon"
+                type="button"
+                title="Export WAV"
+                aria-label="Export WAV"
+                disabled
+              >
+                <svg aria-hidden="true"><use href="#ic-download" /></svg>
+              </button>
+            </div>
+            <div class="transport-bpm">
+              <label for="bpm" class="eyebrow">BPM</label
+              ><input
+                id="bpm"
+                class="field time-field"
+                type="number"
+                min="40"
+                max="240"
+                step="0.1"
+                value="120"
+                aria-label="Tempo in beats per minute"
+              /><button
+                id="tempoSpeedToggle"
+                class="btn btn-quiet btn-sm btn-loop transport-icon"
+                type="button"
+                title="Change audio speed when BPM changes"
+                aria-label="Change audio speed when BPM changes"
+                aria-pressed="false"
+              >
+                <svg aria-hidden="true"><use href="#ic-speed" /></svg></button
+              ><button
+                id="detectBpm"
+                class="btn btn-quiet btn-sm transport-icon"
+                type="button"
+                title="Detect BPM"
+                aria-label="Detect BPM"
+                disabled
+              >
+                <svg aria-hidden="true"><use href="#ic-detect" /></svg>
+              </button>
+            </div>
+            <div class="transport-zoom">
+              <label for="zoom" class="eyebrow">ZOOM</label
+              ><input
+                id="zoom"
+                type="range"
+                min="1"
+                max="16"
+                step="1"
+                value="1"
+                disabled
+              /><span id="zoomLabel" class="time text-[11px]">1×</span>
+            </div>
+            <div class="transport-stats">
+              <div class="stat" title="Duration" aria-label="Duration">
+                <svg class="stat-icon" aria-hidden="true">
+                  <use href="#ic-clock" />
+                </svg>
+                <div id="durationStat" class="time font-bold">0.00 s</div>
+              </div>
+              <div
+                class="stat"
+                title="Selection start"
+                aria-label="Selection start"
+              >
+                <svg class="stat-icon" aria-hidden="true">
+                  <use href="#ic-start" />
+                </svg>
+                <div id="startStat" class="time font-bold">0.00 s</div>
+              </div>
+              <div
+                class="stat"
+                title="Selection end"
+                aria-label="Selection end"
+              >
+                <svg class="stat-icon" aria-hidden="true">
+                  <use href="#ic-end" />
+                </svg>
+                <div id="endStat" class="time font-bold">0.00 s</div>
+              </div>
+              <div
+                class="stat"
+                title="Selected duration"
+                aria-label="Selected duration"
+              >
+                <svg class="stat-icon" aria-hidden="true">
+                  <use href="#ic-range" />
+                </svg>
+                <div id="rangeStat" class="time font-bold text-[#c3ef7a]">
+                  0.00 s
+                </div>
+              </div>
+            </div>
+            <span id="recMessage" class="text-[11px] text-[#90a1a4]"
+              >Connect a source to record</span
+            ><span id="counter" class="time text-[18px] font-bold"
+              >00:00.00</span
+            >
+          </div>
+          <div class="wave-shell">
+            <canvas
+              id="waveCanvas"
+              aria-label="Audio waveform. Drag to select a region, click to set the playhead, double click to select all."
+            ></canvas>
+            <div id="emptyWave" class="wave-empty">
+              <div
+                class="mb-1 rounded-xl border border-[#3b4c4b] bg-[#22312c] p-3 text-[#c3ef7a]"
+              >
+                <svg class="h-7 w-7 fill-none stroke-current stroke-[1.6]">
+                  <use href="#ic-cut" />
+                </svg>
+              </div>
+              <div class="text-[15px] font-bold text-[#c6d7d0]">
+                Your waveform starts here
+              </div>
+              <div class="max-w-[330px] text-[12px] leading-5 text-[#6d8587]">
+                Connect a source and record, or drop an audio file onto the
+                page.
+              </div>
+            </div>
+          </div>
+          <div class="wave-meta">
+            <p>
+              Drag to select or move markers · Click to move playhead ·
+              Double-click to select all
+            </p>
+            <span id="formatLabel">No audio loaded</span>
+          </div>
+          <div class="mt-2">
+            <input
+              id="viewScroll"
+              type="range"
+              min="0"
+              max="1000"
+              step="1"
+              value="0"
+              class="hidden"
+              aria-label="Scroll waveform timeline"
+            />
+          </div>
+        </section>
+        <div class="editor-cards mt-5">
+          <section class="panel" aria-label="Edit controls">
+            <div class="editor-columns">
+              <div class="editor-actions">
+                <div class="control-label">Actions</div>
+                <div class="control-row mt-2">
+                  <label
+                    ><span class="control-label">Sample name</span
+                    ><input
+                      id="sampleName"
+                      class="field sample-field"
+                      maxlength="65"
+                      value="Untitled sample"
+                  /></label>
+                  <label
+                    ><span class="control-label">Start (s)</span
+                    ><input
+                      id="selectionStart"
+                      class="field time-field"
+                      type="number"
+                      step="0.001"
+                      min="0"
+                      disabled
+                  /></label>
+                  <label
+                    ><span class="control-label">End (s)</span
+                    ><input
+                      id="selectionEnd"
+                      class="field time-field"
+                      type="number"
+                      step="0.001"
+                      min="0"
+                      disabled
+                  /></label>
+                  <div class="control-group">
+                    <button
+                      id="inBtn"
+                      class="btn btn-quiet btn-sm"
+                      type="button"
+                      disabled
+                    >
+                      IN at cursor</button
+                    ><button
+                      id="outBtn"
+                      class="btn btn-quiet btn-sm"
+                      type="button"
+                      disabled
+                    >
+                      OUT at cursor</button
+                    ><button
+                      id="allBtn"
+                      class="btn btn-quiet btn-sm"
+                      type="button"
+                      disabled
+                    >
+                      Select all
+                    </button>
+                  </div>
+                </div>
+                <details class="editor-section" open>
+                  <summary class="control-label">Sound position</summary>
+                  <div class="control-group mt-2">
+                    <label
+                      ><span class="control-label">Timeline length (s)</span
+                      ><input
+                        id="timelineLength"
+                        class="field time-field"
+                        type="number"
+                        min="0.01"
+                        max="180"
+                        step="0.001"
+                        disabled /></label
+                    ><label
+                      ><span class="control-label">Sound start (s)</span
+                      ><input
+                        id="soundStart"
+                        class="field time-field"
+                        type="number"
+                        step="0.001"
+                        disabled /></label
+                    ><label
+                      ><span class="control-label">Sound length (s)</span
+                      ><input
+                        id="soundLength"
+                        class="field time-field"
+                        type="number"
+                        min="0.015"
+                        step="0.001"
+                        disabled /></label
+                    ><span class="text-[11px] text-[#8da0a3]"
+                      >Drag the sound bar to move it; drag either edge to
+                      stretch.</span
+                    >
+                  </div>
+                </details>
+                <details class="editor-section" open>
+                  <summary class="control-label">Edit selection</summary>
+                  <div class="control-group mt-2">
+                    <button
+                      id="cropBtn"
+                      class="btn btn-primary btn-sm"
+                      type="button"
+                      disabled
+                    >
+                      Crop</button
+                    ><button
+                      id="deleteBtn"
+                      class="btn btn-quiet btn-sm"
+                      type="button"
+                      disabled
+                    >
+                      Delete</button
+                    ><button
+                      id="reverseBtn"
+                      class="btn btn-quiet btn-sm"
+                      type="button"
+                      disabled
+                    >
+                      Reverse</button
+                    ><button
+                      id="silenceBtn"
+                      class="btn btn-quiet btn-sm"
+                      type="button"
+                      disabled
+                    >
+                      Silence</button
+                    ><button
+                      id="normalizeBtn"
+                      class="btn btn-quiet btn-sm"
+                      type="button"
+                      disabled
+                      title="Normalize the entire sample"
+                    >
+                      Normalize sample</button
+                    ><button
+                      id="undoBtn"
+                      class="btn btn-quiet btn-sm"
+                      type="button"
+                      disabled
+                    >
+                      Undo</button
+                    ><button
+                      id="exportSelectionBtn"
+                      class="btn btn-quiet btn-sm"
+                      type="button"
+                      disabled
+                    >
+                      Export selection WAV
+                    </button>
+                  </div>
+                </details>
+                <details class="editor-section">
+                  <summary class="control-label">5-band EQ</summary>
+                  <div class="editor-settings">
+                    <div class="control-label" style="flex-basis: 100%">
+                      Low shelf
+                    </div>
+                    <div class="fx-param">
+                      <label for="eqLowFreq">Frequency (Hz)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="eqLowFreqSlider"
+                          type="range"
+                          min="20"
+                          max="20000"
+                          step="any"
+                          value="100"
+                          aria-label="Low shelf Frequency (Hz) slider"
+                        /><input
+                          id="eqLowFreq"
+                          class="field"
+                          type="number"
+                          min="20"
+                          max="20000"
+                          step="1"
+                          value="100"
+                          aria-label="Low shelf Frequency (Hz) value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="eqLowGain">Gain (dB)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="eqLowGainSlider"
+                          type="range"
+                          min="-24"
+                          max="24"
+                          step="any"
+                          value="0"
+                          aria-label="Low shelf Gain (dB) slider"
+                        /><input
+                          id="eqLowGain"
+                          class="field"
+                          type="number"
+                          min="-24"
+                          max="24"
+                          step="0.1"
+                          value="0"
+                          aria-label="Low shelf Gain (dB) value"
+                        />
+                      </div>
+                    </div>
+                    <div class="control-label" style="flex-basis: 100%">
+                      Low mid
+                    </div>
+                    <div class="fx-param">
+                      <label for="eqLowMidFreq">Frequency (Hz)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="eqLowMidFreqSlider"
+                          type="range"
+                          min="20"
+                          max="20000"
+                          step="any"
+                          value="350"
+                          aria-label="Low mid Frequency (Hz) slider"
+                        /><input
+                          id="eqLowMidFreq"
+                          class="field"
+                          type="number"
+                          min="20"
+                          max="20000"
+                          step="1"
+                          value="350"
+                          aria-label="Low mid Frequency (Hz) value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="eqLowMidGain">Gain (dB)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="eqLowMidGainSlider"
+                          type="range"
+                          min="-24"
+                          max="24"
+                          step="any"
+                          value="0"
+                          aria-label="Low mid Gain (dB) slider"
+                        /><input
+                          id="eqLowMidGain"
+                          class="field"
+                          type="number"
+                          min="-24"
+                          max="24"
+                          step="0.1"
+                          value="0"
+                          aria-label="Low mid Gain (dB) value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="eqLowMidQ">Q</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="eqLowMidQSlider"
+                          type="range"
+                          min="0.1"
+                          max="20"
+                          step="any"
+                          value="1"
+                          aria-label="Low mid Q slider"
+                        /><input
+                          id="eqLowMidQ"
+                          class="field"
+                          type="number"
+                          min="0.1"
+                          max="20"
+                          step="0.1"
+                          value="1"
+                          aria-label="Low mid Q value"
+                        />
+                      </div>
+                    </div>
+                    <div class="control-label" style="flex-basis: 100%">
+                      Mid
+                    </div>
+                    <div class="fx-param">
+                      <label for="eqMidFreq">Frequency (Hz)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="eqMidFreqSlider"
+                          type="range"
+                          min="20"
+                          max="20000"
+                          step="any"
+                          value="1000"
+                          aria-label="Mid Frequency (Hz) slider"
+                        /><input
+                          id="eqMidFreq"
+                          class="field"
+                          type="number"
+                          min="20"
+                          max="20000"
+                          step="1"
+                          value="1000"
+                          aria-label="Mid Frequency (Hz) value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="eqMidGain">Gain (dB)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="eqMidGainSlider"
+                          type="range"
+                          min="-24"
+                          max="24"
+                          step="any"
+                          value="0"
+                          aria-label="Mid Gain (dB) slider"
+                        /><input
+                          id="eqMidGain"
+                          class="field"
+                          type="number"
+                          min="-24"
+                          max="24"
+                          step="0.1"
+                          value="0"
+                          aria-label="Mid Gain (dB) value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="eqMidQ">Q</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="eqMidQSlider"
+                          type="range"
+                          min="0.1"
+                          max="20"
+                          step="any"
+                          value="1"
+                          aria-label="Mid Q slider"
+                        /><input
+                          id="eqMidQ"
+                          class="field"
+                          type="number"
+                          min="0.1"
+                          max="20"
+                          step="0.1"
+                          value="1"
+                          aria-label="Mid Q value"
+                        />
+                      </div>
+                    </div>
+                    <div class="control-label" style="flex-basis: 100%">
+                      High mid
+                    </div>
+                    <div class="fx-param">
+                      <label for="eqHighMidFreq">Frequency (Hz)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="eqHighMidFreqSlider"
+                          type="range"
+                          min="20"
+                          max="20000"
+                          step="any"
+                          value="4000"
+                          aria-label="High mid Frequency (Hz) slider"
+                        /><input
+                          id="eqHighMidFreq"
+                          class="field"
+                          type="number"
+                          min="20"
+                          max="20000"
+                          step="1"
+                          value="4000"
+                          aria-label="High mid Frequency (Hz) value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="eqHighMidGain">Gain (dB)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="eqHighMidGainSlider"
+                          type="range"
+                          min="-24"
+                          max="24"
+                          step="any"
+                          value="0"
+                          aria-label="High mid Gain (dB) slider"
+                        /><input
+                          id="eqHighMidGain"
+                          class="field"
+                          type="number"
+                          min="-24"
+                          max="24"
+                          step="0.1"
+                          value="0"
+                          aria-label="High mid Gain (dB) value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="eqHighMidQ">Q</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="eqHighMidQSlider"
+                          type="range"
+                          min="0.1"
+                          max="20"
+                          step="any"
+                          value="1"
+                          aria-label="High mid Q slider"
+                        /><input
+                          id="eqHighMidQ"
+                          class="field"
+                          type="number"
+                          min="0.1"
+                          max="20"
+                          step="0.1"
+                          value="1"
+                          aria-label="High mid Q value"
+                        />
+                      </div>
+                    </div>
+                    <div class="control-label" style="flex-basis: 100%">
+                      High shelf
+                    </div>
+                    <div class="fx-param">
+                      <label for="eqHighFreq">Frequency (Hz)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="eqHighFreqSlider"
+                          type="range"
+                          min="20"
+                          max="20000"
+                          step="any"
+                          value="10000"
+                          aria-label="High shelf Frequency (Hz) slider"
+                        /><input
+                          id="eqHighFreq"
+                          class="field"
+                          type="number"
+                          min="20"
+                          max="20000"
+                          step="1"
+                          value="10000"
+                          aria-label="High shelf Frequency (Hz) value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="eqHighGain">Gain (dB)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="eqHighGainSlider"
+                          type="range"
+                          min="-24"
+                          max="24"
+                          step="any"
+                          value="0"
+                          aria-label="High shelf Gain (dB) slider"
+                        /><input
+                          id="eqHighGain"
+                          class="field"
+                          type="number"
+                          min="-24"
+                          max="24"
+                          step="0.1"
+                          value="0"
+                          aria-label="High shelf Gain (dB) value"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      id="eqApplyBtn"
+                      class="btn btn-quiet btn-sm btn-loop"
+                      type="button"
+                      aria-pressed="false"
+                      disabled
+                    >
+                      Enable EQ</button
+                    ><button
+                      id="eqResetBtn"
+                      class="btn btn-quiet btn-sm"
+                      type="button"
+                      disabled
+                    >
+                      Reset EQ
+                    </button>
+                  </div>
+                </details>
+                <details class="editor-section">
+                  <summary class="control-label">Quality / resample</summary>
+                  <div class="editor-settings">
+                    <label
+                      >Sample rate (Hz)<select id="resampleRate" class="field">
+                        <option value="4000">4000</option>
+                        <option value="5000">5000</option>
+                        <option value="6000">6000</option>
+                        <option value="7350">7350</option>
+                        <option value="8000">8000</option>
+                        <option value="10000">10000</option>
+                        <option value="11025">11025</option>
+                        <option value="12000">12000</option>
+                        <option value="12500">12500</option>
+                        <option value="16000">16000</option>
+                        <option value="22050">22050</option>
+                        <option value="24000">24000</option>
+                        <option value="31250">31250</option>
+                        <option value="32000">32000</option>
+                        <option value="44100" selected>44100</option>
+                        <option value="48000">48000</option>
+                        <option value="88200">88200</option>
+                        <option value="96000">96000</option>
+                      </select></label
+                    ><label
+                      >Quality<select id="resampleQuality" class="field">
+                        <option value="16">Standard</option>
+                        <option value="32" selected>High</option>
+                        <option value="64">Best</option>
+                      </select></label
+                    ><button
+                      id="qualityApplyBtn"
+                      class="btn btn-quiet btn-sm btn-loop"
+                      type="button"
+                      aria-pressed="false"
+                      disabled
+                    >
+                      Enable resampling</button
+                    ><button
+                      id="qualityResetBtn"
+                      class="btn btn-quiet btn-sm"
+                      type="button"
+                      title="Reset resampling; WAV format and channels stay unchanged"
+                      disabled
+                    >
+                      Reset quality</button
+                    ><label
+                      >WAV export<select id="exportDepth" class="field">
+                        <option value="8">8-bit PCM</option>
+                        <option value="16" selected>16-bit PCM</option>
+                        <option value="24">24-bit PCM</option>
+                        <option value="32">32-bit float</option>
+                      </select></label
+                    ><label
+                      >Channels<select id="exportChannels" class="field">
+                        <option value="original">Original</option>
+                        <option value="mono">Mono</option>
+                      </select></label
+                    >
+                  </div>
+                  <p class="text-[11px] text-[#8da0a3] mt-2">
+                    Enable resampling and apply the chain to set the WAV rate;
+                    format and channels apply to all downloads. Live FX run at
+                    the playback device rate.
+                  </p>
+                </details>
+              </div>
+              <div class="editor-fx">
+                <div class="fx-header">
+                  <div class="control-label">FX</div>
+                  <button
+                    id="fxResetBtn"
+                    class="btn btn-quiet btn-sm"
+                    type="button"
+                    title="Reset effects to the original sound"
+                    disabled
+                  >
+                    Reset
+                  </button>
+                </div>
+                <details class="editor-section">
+                  <summary class="control-label">Pitch</summary>
+                  <div class="editor-settings">
+                    <div class="fx-param">
+                      <label for="pitchSemitones">Semitones</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="pitchSemitonesSlider"
+                          type="range"
+                          min="-12"
+                          max="12"
+                          step="any"
+                          value="0"
+                          aria-label="Semitones slider"
+                        /><input
+                          id="pitchSemitones"
+                          class="field"
+                          type="number"
+                          min="-12"
+                          max="12"
+                          step="1"
+                          value="0"
+                          aria-label="Semitones value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="pitchCents">Cents</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="pitchCentsSlider"
+                          type="range"
+                          min="-100"
+                          max="100"
+                          step="any"
+                          value="0"
+                          aria-label="Cents slider"
+                        /><input
+                          id="pitchCents"
+                          class="field"
+                          type="number"
+                          min="-100"
+                          max="100"
+                          step="1"
+                          value="0"
+                          aria-label="Cents value"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      id="pitchApplyBtn"
+                      class="btn btn-quiet btn-sm btn-loop"
+                      type="button"
+                      aria-pressed="false"
+                      disabled
+                    >
+                      Enable
+                    </button>
+                  </div>
+                </details>
+                <details class="editor-section">
+                  <summary class="control-label">Reverb</summary>
+                  <div class="editor-settings">
+                    <label
+                      >Type<select
+                        id="reverbType"
+                        class="field"
+                        aria-label="Reverb type"
+                      >
+                        <option value="room">Room</option>
+                        <option value="hall" selected>Hall</option>
+                        <option value="chamber">Chamber</option>
+                        <option value="plate">Plate</option>
+                      </select></label
+                    >
+                    <div class="fx-param">
+                      <label for="reverbDecay">Decay (s)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="reverbDecaySlider"
+                          type="range"
+                          min="0.1"
+                          max="8"
+                          step="any"
+                          value="1.5"
+                          aria-label="Decay slider"
+                        /><input
+                          id="reverbDecay"
+                          class="field"
+                          type="number"
+                          min="0.1"
+                          max="8"
+                          step="0.1"
+                          value="1.5"
+                          aria-label="Decay value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="reverbPredelay">Pre-delay (ms)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="reverbPredelaySlider"
+                          type="range"
+                          min="0"
+                          max="250"
+                          step="any"
+                          value="20"
+                          aria-label="Pre-delay slider"
+                        /><input
+                          id="reverbPredelay"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="250"
+                          step="1"
+                          value="20"
+                          aria-label="Pre-delay value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="reverbTone">Tone (Hz)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="reverbToneSlider"
+                          type="range"
+                          min="200"
+                          max="20000"
+                          step="any"
+                          value="6000"
+                          aria-label="Tone slider"
+                        /><input
+                          id="reverbTone"
+                          class="field"
+                          type="number"
+                          min="200"
+                          max="20000"
+                          step="100"
+                          value="6000"
+                          aria-label="Tone value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="reverbMix">Mix (%)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="reverbMixSlider"
+                          type="range"
+                          min="0"
+                          max="100"
+                          step="any"
+                          value="30"
+                          aria-label="Mix slider"
+                        /><input
+                          id="reverbMix"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="1"
+                          value="30"
+                          aria-label="Mix value"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      id="reverbApplyBtn"
+                      class="btn btn-quiet btn-sm btn-loop"
+                      type="button"
+                      aria-pressed="false"
+                      disabled
+                    >
+                      Enable
+                    </button>
+                  </div>
+                </details>
+                <details class="editor-section">
+                  <summary class="control-label">Delay</summary>
+                  <div class="editor-settings">
+                    <label
+                      >Type<select
+                        id="delayType"
+                        class="field"
+                        aria-label="Delay type"
+                      >
+                        <option value="digital">Digital</option>
+                        <option value="analog">Analog</option>
+                        <option value="tape">Tape</option>
+                        <option value="pingpong">Ping-pong</option>
+                      </select></label
+                    >
+                    <div class="fx-param">
+                      <label for="delayTime">Time (ms)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="delayTimeSlider"
+                          type="range"
+                          min="1"
+                          max="2000"
+                          step="any"
+                          value="250"
+                          aria-label="Time slider"
+                        /><input
+                          id="delayTime"
+                          class="field"
+                          type="number"
+                          min="1"
+                          max="2000"
+                          step="1"
+                          value="250"
+                          aria-label="Time value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="delayFeedback">Feedback (%)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="delayFeedbackSlider"
+                          type="range"
+                          min="0"
+                          max="90"
+                          step="any"
+                          value="35"
+                          aria-label="Feedback slider"
+                        /><input
+                          id="delayFeedback"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="90"
+                          step="1"
+                          value="35"
+                          aria-label="Feedback value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="delayTone">Tone (Hz)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="delayToneSlider"
+                          type="range"
+                          min="200"
+                          max="20000"
+                          step="any"
+                          value="6000"
+                          aria-label="Tone slider"
+                        /><input
+                          id="delayTone"
+                          class="field"
+                          type="number"
+                          min="200"
+                          max="20000"
+                          step="100"
+                          value="6000"
+                          aria-label="Tone value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="delayMix">Mix (%)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="delayMixSlider"
+                          type="range"
+                          min="0"
+                          max="100"
+                          step="any"
+                          value="30"
+                          aria-label="Mix slider"
+                        /><input
+                          id="delayMix"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="1"
+                          value="30"
+                          aria-label="Mix value"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      id="delayApplyBtn"
+                      class="btn btn-quiet btn-sm btn-loop"
+                      type="button"
+                      aria-pressed="false"
+                      disabled
+                    >
+                      Enable
+                    </button>
+                  </div>
+                </details>
+                <details class="editor-section">
+                  <summary class="control-label">Distortion</summary>
+                  <div class="editor-settings">
+                    <label
+                      >Type<select id="distType" class="field">
+                        <option value="soft">Soft saturation</option>
+                        <option value="hard">Hard clip</option>
+                        <option value="fold">Wavefold</option>
+                        <option value="crusher">Bitcrusher</option>
+                      </select></label
+                    >
+                    <div class="fx-param">
+                      <label for="distDrive">Drive (dB)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="distDriveSlider"
+                          type="range"
+                          min="0"
+                          max="36"
+                          step="any"
+                          value="6"
+                          aria-label="Drive slider"
+                        /><input
+                          id="distDrive"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="36"
+                          step="1"
+                          value="6"
+                          aria-label="Drive value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="distTone">Tone (Hz)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="distToneSlider"
+                          type="range"
+                          min="200"
+                          max="20000"
+                          step="any"
+                          value="12000"
+                          aria-label="Tone slider"
+                        /><input
+                          id="distTone"
+                          class="field"
+                          type="number"
+                          min="200"
+                          max="20000"
+                          step="100"
+                          value="12000"
+                          aria-label="Tone value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="distBits">Resolution (bits)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="distBitsSlider"
+                          type="range"
+                          min="2"
+                          max="16"
+                          step="any"
+                          value="8"
+                          aria-label="Resolution slider"
+                        /><input
+                          id="distBits"
+                          class="field"
+                          type="number"
+                          min="2"
+                          max="16"
+                          step="1"
+                          value="8"
+                          aria-label="Resolution value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="distDownsample">Downsample (×)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="distDownsampleSlider"
+                          type="range"
+                          min="1"
+                          max="32"
+                          step="any"
+                          value="1"
+                          aria-label="Downsample slider"
+                        /><input
+                          id="distDownsample"
+                          class="field"
+                          type="number"
+                          min="1"
+                          max="32"
+                          step="1"
+                          value="1"
+                          aria-label="Downsample value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="distMix">Mix (%)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="distMixSlider"
+                          type="range"
+                          min="0"
+                          max="100"
+                          step="any"
+                          value="50"
+                          aria-label="Mix slider"
+                        /><input
+                          id="distMix"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="1"
+                          value="50"
+                          aria-label="Mix value"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      id="distortionApplyBtn"
+                      class="btn btn-quiet btn-sm btn-loop"
+                      type="button"
+                      aria-pressed="false"
+                      disabled
+                    >
+                      Enable
+                    </button>
+                  </div>
+                </details>
+                <details class="editor-section">
+                  <summary class="control-label">Compressor</summary>
+                  <div class="editor-settings">
+                    <label
+                      >Type<select
+                        id="compType"
+                        class="field"
+                        aria-label="Compressor type"
+                      >
+                        <option value="clean">Clean</option>
+                        <option value="vca">VCA style</option>
+                        <option value="variablemu">
+                          Variable Mu (tube) style
+                        </option>
+                        <option value="digital">Digital / Transparent</option>
+                        <option value="multiband">Multiband</option>
+                        <option value="opto">Opto style</option>
+                        <option value="fet">FET style</option>
+                        <option value="vinyl303">
+                          Vinyl Sim · 303 inspired
+                        </option>
+                      </select></label
+                    >
+                    <div class="fx-param" data-comp-mode="single">
+                      <label for="compThreshold">Threshold (dB)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="compThresholdSlider"
+                          type="range"
+                          min="-100"
+                          max="0"
+                          step="any"
+                          value="-24"
+                          aria-label="Threshold slider"
+                        /><input
+                          id="compThreshold"
+                          class="field"
+                          type="number"
+                          min="-100"
+                          max="0"
+                          step="1"
+                          value="-24"
+                          aria-label="Threshold value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="general">
+                      <label for="compRatio">Ratio (:1)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="compRatioSlider"
+                          type="range"
+                          min="1"
+                          max="20"
+                          step="any"
+                          value="4"
+                          aria-label="Ratio slider"
+                        /><input
+                          id="compRatio"
+                          class="field"
+                          type="number"
+                          min="1"
+                          max="20"
+                          step="0.5"
+                          value="4"
+                          aria-label="Ratio value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="general">
+                      <label for="compKnee">Knee (dB)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="compKneeSlider"
+                          type="range"
+                          min="0"
+                          max="40"
+                          step="any"
+                          value="12"
+                          aria-label="Knee slider"
+                        /><input
+                          id="compKnee"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="40"
+                          step="1"
+                          value="12"
+                          aria-label="Knee value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="general">
+                      <label for="compAttack">Attack (ms)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="compAttackSlider"
+                          type="range"
+                          min="0"
+                          max="1000"
+                          step="any"
+                          value="10"
+                          aria-label="Attack slider"
+                        /><input
+                          id="compAttack"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="1000"
+                          step="1"
+                          value="10"
+                          aria-label="Attack value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="general">
+                      <label for="compRelease">Release (ms)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="compReleaseSlider"
+                          type="range"
+                          min="0"
+                          max="1000"
+                          step="any"
+                          value="100"
+                          aria-label="Release slider"
+                        /><input
+                          id="compRelease"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="1000"
+                          step="1"
+                          value="100"
+                          aria-label="Release value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="general">
+                      <label for="compMakeup">Makeup (dB)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="compMakeupSlider"
+                          type="range"
+                          min="0"
+                          max="24"
+                          step="any"
+                          value="0"
+                          aria-label="Makeup slider"
+                        /><input
+                          id="compMakeup"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="24"
+                          step="1"
+                          value="0"
+                          aria-label="Makeup value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="multiband" hidden>
+                      <label for="compLowThreshold">Low threshold (dB)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="compLowThresholdSlider"
+                          type="range"
+                          min="-100"
+                          max="0"
+                          step="any"
+                          value="-24"
+                          aria-label="Low threshold slider"
+                        /><input
+                          id="compLowThreshold"
+                          class="field"
+                          type="number"
+                          min="-100"
+                          max="0"
+                          step="1"
+                          value="-24"
+                          aria-label="Low threshold value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="multiband" hidden>
+                      <label for="compMidThreshold">Mid threshold (dB)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="compMidThresholdSlider"
+                          type="range"
+                          min="-100"
+                          max="0"
+                          step="any"
+                          value="-24"
+                          aria-label="Mid threshold slider"
+                        /><input
+                          id="compMidThreshold"
+                          class="field"
+                          type="number"
+                          min="-100"
+                          max="0"
+                          step="1"
+                          value="-24"
+                          aria-label="Mid threshold value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="multiband" hidden>
+                      <label for="compHighThreshold">High threshold (dB)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="compHighThresholdSlider"
+                          type="range"
+                          min="-100"
+                          max="0"
+                          step="any"
+                          value="-24"
+                          aria-label="High threshold slider"
+                        /><input
+                          id="compHighThreshold"
+                          class="field"
+                          type="number"
+                          min="-100"
+                          max="0"
+                          step="1"
+                          value="-24"
+                          aria-label="High threshold value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="multiband" hidden>
+                      <label for="compLowCross">Low crossover (Hz)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="compLowCrossSlider"
+                          type="range"
+                          min="40"
+                          max="1000"
+                          step="any"
+                          value="250"
+                          aria-label="Low crossover slider"
+                        /><input
+                          id="compLowCross"
+                          class="field"
+                          type="number"
+                          min="40"
+                          max="1000"
+                          step="10"
+                          value="250"
+                          aria-label="Low crossover value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="multiband" hidden>
+                      <label for="compHighCross">High crossover (Hz)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="compHighCrossSlider"
+                          type="range"
+                          min="1000"
+                          max="12000"
+                          step="any"
+                          value="2500"
+                          aria-label="High crossover slider"
+                        /><input
+                          id="compHighCross"
+                          class="field"
+                          type="number"
+                          min="1000"
+                          max="12000"
+                          step="100"
+                          value="2500"
+                          aria-label="High crossover value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="vinyl303" hidden>
+                      <label for="vinylComp">Comp (%)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="vinylCompSlider"
+                          type="range"
+                          min="0"
+                          max="100"
+                          step="any"
+                          value="60"
+                          aria-label="Comp slider"
+                        /><input
+                          id="vinylComp"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="1"
+                          value="60"
+                          aria-label="Comp value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="vinyl303" hidden>
+                      <label for="vinylNoise">Noise (%)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="vinylNoiseSlider"
+                          type="range"
+                          min="0"
+                          max="100"
+                          step="any"
+                          value="0"
+                          aria-label="Noise slider"
+                        /><input
+                          id="vinylNoise"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="1"
+                          value="0"
+                          aria-label="Noise value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="vinyl303" hidden>
+                      <label for="vinylWow">Wow / flutter (%)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="vinylWowSlider"
+                          type="range"
+                          min="0"
+                          max="100"
+                          step="any"
+                          value="0"
+                          aria-label="Wow / flutter slider"
+                        /><input
+                          id="vinylWow"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="1"
+                          value="0"
+                          aria-label="Wow / flutter value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param" data-comp-mode="vinyl303" hidden>
+                      <label for="vinylLevel">Level (%)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="vinylLevelSlider"
+                          type="range"
+                          min="0"
+                          max="100"
+                          step="any"
+                          value="80"
+                          aria-label="Level slider"
+                        /><input
+                          id="vinylLevel"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="1"
+                          value="80"
+                          aria-label="Level value"
+                        />
+                      </div>
+                    </div>
+                    <div class="fx-param">
+                      <label for="compMix">Mix (%)</label>
+                      <div class="fx-param-controls">
+                        <input
+                          id="compMixSlider"
+                          type="range"
+                          min="0"
+                          max="100"
+                          step="any"
+                          value="100"
+                          aria-label="Mix slider"
+                        /><input
+                          id="compMix"
+                          class="field"
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="1"
+                          value="100"
+                          aria-label="Mix value"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      id="compApplyBtn"
+                      class="btn btn-quiet btn-sm btn-loop"
+                      type="button"
+                      aria-pressed="false"
+                      disabled
+                    >
+                      Enable
+                    </button>
+                  </div>
+                </details>
+                <div class="control-group editor-section">
+                  <button
+                    id="fxApplyChainBtn"
+                    class="btn btn-primary btn-sm"
+                    type="button"
+                    disabled
+                  >
+                    Apply chain</button
+                  ><button
+                    id="fxDiscardBtn"
+                    class="btn btn-quiet btn-sm"
+                    type="button"
+                    disabled
+                  >
+                    Discard changes
+                  </button>
+                </div>
+                <p class="text-[11px] text-[#8da0a3] mt-2">
+                  Use Play and Loop to audition effects on the whole sample,
+                  then apply once. Processing order: resampling → pitch / time →
+                  EQ → reverb → delay → distortion → compressor. Disable and
+                  apply effects to use destructive edits.
+                </p>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+      <section id="view-chop" role="tabpanel" aria-labelledby="tab-chop" hidden>
+        <aside
+          class="panel p-4 sm:p-6 chop-controls"
+          aria-label="Slice controls"
+        >
+          <div class="chop-layout">
+            <div class="chop-options">
+              <div class="chop-group">
+                <span class="control-label">Equal slices</span>
+                <div class="control-group">
+                  <button
+                    data-chops="2"
+                    class="btn btn-quiet btn-sm"
+                    type="button"
+                    disabled
+                  >
+                    2</button
+                  ><button
+                    data-chops="4"
+                    class="btn btn-quiet btn-sm"
+                    type="button"
+                    disabled
+                  >
+                    4</button
+                  ><button
+                    data-chops="8"
+                    class="btn btn-quiet btn-sm"
+                    type="button"
+                    disabled
+                  >
+                    8</button
+                  ><button
+                    data-chops="16"
+                    class="btn btn-quiet btn-sm"
+                    type="button"
+                    disabled
+                  >
+                    16</button
+                  ><input
+                    id="chopCount"
+                    class="field chop-count"
+                    type="number"
+                    min="2"
+                    max="128"
+                    value="12"
+                    aria-label="Custom slice count"
+                  /><button
+                    id="customChopsBtn"
+                    class="btn btn-quiet btn-sm"
+                    type="button"
+                    disabled
+                  >
+                    Slice
+                  </button>
+                </div>
+              </div>
+              <div class="chop-group">
+                <label for="transientSensitivity" class="control-label"
+                  >Transients · Sensitivity
+                  <span id="sensitivityValue">50%</span></label
+                >
+                <div class="sensitivity">
+                  <input
+                    id="transientSensitivity"
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="50"
+                    aria-label="Transient sensitivity"
+                  />
+                </div>
+                <button
+                  id="transientBtn"
+                  class="btn btn-quiet btn-sm"
+                  type="button"
+                  disabled
+                >
+                  Detect transients
+                </button>
+              </div>
+              <div class="chop-group">
+                <span class="control-label">Actions</span>
+                <div class="control-group">
+                  <button
+                    id="splitBtn"
+                    class="btn btn-quiet btn-sm"
+                    type="button"
+                    disabled
+                  >
+                    Split at cursor</button
+                  ><button
+                    id="addSliceBtn"
+                    class="btn btn-primary btn-sm"
+                    type="button"
+                    disabled
+                  >
+                    Add selection</button
+                  ><button
+                    id="clearSlicesBtn"
+                    class="btn btn-quiet btn-sm"
+                    type="button"
+                    disabled
+                  >
+                    Clear all</button
+                  ><button
+                    id="exportZipBtn"
+                    class="btn btn-quiet btn-sm"
+                    type="button"
+                    disabled
+                  >
+                    Download ZIP</button
+                  ><button
+                    id="chopUndoBtn"
+                    class="btn btn-quiet btn-sm"
+                    type="button"
+                    disabled
+                  >
+                    Undo
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="chop-library">
+              <span class="control-label"
+                >Slices · <span id="sliceCount">0</span></span
+              >
+              <div id="sliceInspector" class="slice-inspector" hidden>
+                <div class="control-row">
+                  <label
+                    ><span class="control-label">Start (s)</span
+                    ><input
+                      id="sliceStart"
+                      class="field time-field"
+                      type="number"
+                      min="0"
+                      step="0.001" /></label
+                  ><label
+                    ><span class="control-label">End (s)</span
+                    ><input
+                      id="sliceEnd"
+                      class="field time-field"
+                      type="number"
+                      min="0"
+                      step="0.001" /></label
+                  ><label
+                    ><span class="control-label">Fade in (ms)</span
+                    ><input
+                      id="sliceFadeIn"
+                      class="field time-field"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value="0" /><input
+                      id="sliceFadeInSlider"
+                      type="range"
+                      min="0"
+                      max="5000"
+                      value="0"
+                      aria-label="Slice fade in" /></label
+                  ><label
+                    ><span class="control-label">Fade out (ms)</span
+                    ><input
+                      id="sliceFadeOut"
+                      class="field time-field"
+                      type="number"
+                      min="0"
+                      step="1"
+                      value="0" /><input
+                      id="sliceFadeOutSlider"
+                      type="range"
+                      min="0"
+                      max="5000"
+                      value="0"
+                      aria-label="Slice fade out" /></label
+                  ><button
+                    id="auditionSliceBtn"
+                    class="btn btn-quiet btn-sm"
+                    type="button"
+                  >
+                    Play slice
+                  </button>
+                </div>
+                <p class="text-[11px] text-[#8da0a3] mt-2">
+                  Shared boundaries move together.
+                </p>
+              </div>
+              <div id="slices" class="slice-list" aria-live="polite"></div>
+            </div>
+          </div>
+        </aside>
+      </section>
+      <section
+        id="view-play"
+        role="tabpanel"
+        aria-labelledby="tab-play"
+        class="panel p-4 sm:p-6"
+        hidden
+      >
+        <div id="pad-grid" class="pad-grid"></div>
+        <div class="play-controls">
+          <button id="bank-prev" class="btn btn-quiet btn-sm" type="button">
+            Previous</button
+          ><span id="bank-label" class="time text-[12px]"></span
+          ><button id="bank-next" class="btn btn-quiet btn-sm" type="button">
+            Next</button
+          ><button id="pads-stop" class="btn btn-quiet btn-sm" type="button">
+            Stop all
+          </button>
+        </div>
+      </section>
+      <footer
+        class="mt-6 flex flex-wrap justify-between gap-3 text-[11px] leading-5 text-[#6e8488]"
+      >
+        <span
+          >100% client-side audio processing · No account, upload, or
+          server-side storage</span
+        ><span
+          >Chrome / Edge recommended for tab audio · Desktop capture depends on
+          browser &amp; OS</span
+        >
+      </footer>
+    </div>
+    <input
+      id="fileInput"
+      type="file"
+      accept="audio/*,.wav,.mp3,.ogg,.flac,.m4a,.webm"
+      hidden
+    />
+    <div id="dropOverlay" class="drop-overlay">Drop audio to edit</div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./main.ts"></script>
+  </body>
 </html>

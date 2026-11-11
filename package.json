@@ -7,7 +7,7 @@
     "build": "bun scripts/build.ts",
     "start": "bun scripts/server.ts",
     "test": "bun test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "bun check"
   },
   "dependencies": {
     "signalsmith-stretch": "1.3.2"
@@ -17,6 +17,6 @@
     "@types/audioworklet": "^0.0.101",
     "@types/bun": "^1.4.4",
     "tailwindcss": "^4.3.5",
-    "typescript": "^5.9.3"
+    "typescript": "7.0.2"
   }
 }

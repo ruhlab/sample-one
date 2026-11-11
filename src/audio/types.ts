@@ -1,5 +1,8 @@
 /** Audio data required by the analysis and export functions. */
-export type AudioSamples = Pick<AudioBuffer, 'numberOfChannels' | 'sampleRate' | 'length' | 'duration' | 'getChannelData'>;
+export type AudioSamples = Pick<
+  AudioBuffer,
+  "numberOfChannels" | "sampleRate" | "length" | "duration" | "getChannelData"
+>;
 
 export interface WavOptions {
   mono?: boolean;

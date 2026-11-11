@@ -21,11 +21,12 @@ jobs:
       - uses: actions/checkout@v6
       - uses: oven-sh/setup-bun@v2
       - name: Install dependencies
-        run: npm ci
-      - name: Check types and tests
+        run: bun install --frozen-lockfile
+      - name: Check formatting, types and tests
         run: |
-          npm run typecheck
-          npm test
+          bun fmt --check
+          bun check
+          bun test
       - name: Build standalone app
         run: |
           bun run build
