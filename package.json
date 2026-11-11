@@ -3,11 +3,20 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun --watch server.ts",
-    "build": "bun build.ts",
-    "start": "bun server.ts"
+    "dev": "SAMPLE_ONE_DEV=1 bun scripts/server.ts",
+    "build": "bun scripts/build.ts",
+    "start": "bun scripts/server.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "signalsmith-stretch": "1.3.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.5",
+    "@types/audioworklet": "^0.0.101",
+    "@types/bun": "^1.4.4",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^5.9.3"
   }
 }

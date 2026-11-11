@@ -7,8 +7,8 @@
   <title>SAMPLE/ONE — Audio Sampler</title>
   <meta name="description" content="A minimal one-sample audio workstation. Capture a browser tab or input, edit waveforms, chop slices and export WAV." />
   <link rel="canonical" href="https://ruhlab.github.io/sample-one/" />
-  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+  <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+  <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="SAMPLE/ONE" />
   <meta property="og:title" content="SAMPLE/ONE — Audio Sampler" />
@@ -22,152 +22,20 @@
   <meta name="twitter:title" content="SAMPLE/ONE — Audio Sampler" />
   <meta name="twitter:description" content="Capture, edit and chop audio, build an FX chain, and play slices in your browser." />
   <meta name="twitter:image" content="https://ruhlab.github.io/sample-one/social-card.png?v=2" />
-  <!-- Local utility fallback renders immediately. Tailwind Play CDN is optional and nonblocking. -->
-  <link rel="stylesheet" href="./fallback.css" />
-  <!-- Load Tailwind from its CDN only after the page is usable; a CDN timeout cannot block initial navigation. -->
-  <script>
-    window.addEventListener('load', () => {
-      if (!navigator.onLine) return;
-      const tailwind = document.createElement('script');
-      tailwind.src = 'https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4';
-      tailwind.async = true;
-      document.head.appendChild(tailwind);
-    }, { once: true });
-  </script>
-  <style>
-    :root { color-scheme: dark; --bg:#0c1114; --card:#161d21; --raised:#1d262b; --line:#303a3f; --ink:#eef4f0; --muted:#849398; --accent:#c3ef7a; --danger:#fd827d; }
-    *,*::before,*::after { box-sizing:border-box; }
-    body { margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:var(--ink);background:var(--bg); }
-    button,input,select { font:inherit; }
-    button { cursor:pointer; }
-    button:disabled { opacity:.36; cursor:not-allowed; }
-    button:focus-visible,input:focus-visible,select:focus-visible { outline:2px solid var(--accent);outline-offset:3px; }
-    .panel { background:var(--card);border:1px solid var(--line);border-radius:19px; }
-    .eyebrow { font-size:10px;font-weight:800;letter-spacing:.17em;color:#8b9b9e;text-transform:uppercase; }
-    .btn { display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:0 14px;border-radius:10px;border:1px solid #3a484d;background:#263037;color:#e9f1ed;font-size:12px;font-weight:750;white-space:nowrap;transition:background .14s,border-color .14s,transform .12s; }
-    .btn:hover:not(:disabled) { background:#313f45;border-color:#718185; }
-    .btn:active:not(:disabled) { transform:translateY(1px); }
-    .btn-primary { color:#19210e;background:var(--accent);border-color:var(--accent); }
-    .btn-primary:hover:not(:disabled) { background:#d6f8a2;border-color:#d6f8a2; }
-    .btn-record { background:#43282b;border-color:#764143;color:#ffaaa5; }
-    .btn-record:hover:not(:disabled) { background:#573136;border-color:#935155; }
-    .btn-record.recording { background:#fd827d;color:#321718;border-color:#fd827d;animation:pulse 1.1s infinite; }
-    .btn-quiet { background:#161e22;border-color:#313e43;color:#acbcbd; }
-    .btn-quiet:hover:not(:disabled) { background:#263137; }
-    .btn-sm { min-height:33px;padding:0 10px;font-size:11px;border-radius:8px; }
-    .field { background:#10171a;border:1px solid #384448;border-radius:9px;color:#e8f0ed;padding:10px 12px;min-width:0;width:100%;font-size:12px; }
-    .field:focus { border-color:#91b760;outline:0; }
-    .time { font-variant-numeric:tabular-nums; font-feature-settings:"tnum"; }
-    input[type="range"] { width:100%;accent-color:var(--accent);cursor:pointer; }
-    .pill { display:inline-flex;align-items:center;gap:7px;border:1px solid #384448;border-radius:999px;padding:7px 11px;font-size:11px;color:#a5b4b5;font-weight:700; }
-    .dot { width:7px;height:7px;background:#65767b;border-radius:999px; }
-    .pill.connected .dot { background:var(--accent);box-shadow:0 0 12px #c3ef7a88; }
-    .pill.rec-live .dot { background:var(--danger);box-shadow:0 0 12px #fd827d99; }
-    .meter { height:5px;background:#2d3a3f;overflow:hidden;border-radius:999px; }
-    #levelFill { height:100%;width:0%;background:linear-gradient(90deg,#84d7a3,#c3ef7a,#ffd47b,#fd827d);border-radius:inherit;transition:width 65ms; }
-    #waveCanvas { display:block;width:100%;height:100%;touch-action:none;cursor:crosshair; }
-    .wave-shell { position:relative;height:clamp(170px,23vw,260px);background:linear-gradient(180deg,#10191a 0%,#0d1518 100%);border:1px solid #344246;border-radius:13px;overflow:hidden; }
-    .wave-empty { position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;text-align:center;padding:25px;pointer-events:none; }
-    .slice-row { border:1px solid #344144;background:#111a1d;border-radius:10px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:9px 10px; }
-    .slice-row.active { background:#223021;border-color:#6b8951; }
-    .slice-row:hover { border-color:#6f815f; }
-    .slice-row .mini { background:#263137;border:1px solid #3c4a4e;color:#becbca;border-radius:7px;padding:6px 8px;font-size:10px;font-weight:750; }
-    .slice-row .mini:hover { background:#35434a; }
-    .slice-row .slice-rename { padding:6px 8px; width:100%; min-width:0; }
-    .stat { border:1px solid #303d42;border-radius:10px;background:#111a1d;padding:10px 12px;min-width:0; }
-    .seg { border:1px solid #354246;background:#11191c;border-radius:10px;padding:3px;display:inline-flex;gap:3px; }
-    .seg button { border-radius:7px;border:0;color:#a4b5b5;background:transparent;padding:7px 10px;font-size:11px;font-weight:750; }
-    .seg button.active { color:#182313;background:var(--accent); }
-    .toast { position:fixed;left:50%;bottom:20px;transform:translate(-50%,16px);opacity:0;pointer-events:none;max-width:min(90vw,610px);border:1px solid #607070;border-radius:12px;padding:12px 18px;background:#263338;color:#f0f7f4;box-shadow:0 20px 40px #0009;font-size:12px;text-align:center;z-index:60;transition:transform .18s,opacity .18s; }
-    .toast.show { opacity:1;transform:translate(-50%,0); }
-    .drop-overlay { position:fixed;inset:0;background:#0d1519dd;z-index:45;border:5px dashed var(--accent);display:none;align-items:center;justify-content:center;font-weight:850;font-size:clamp(18px,4vw,40px);letter-spacing:-.03em;pointer-events:none; }
-    .drop-overlay.active { display:flex; }
-    [hidden] { display:none !important; }
-    .app-header { margin-bottom:14px; }
-    .app-header > div:first-child > div:first-child { width:32px; height:32px; }
-    .app-header .eyebrow { display:none; }
-    .app-header .pill { padding:5px 9px; }
-    #wave-panel, .editor-cards > .panel, .chop-controls, #view-play { padding:14px; }
-    .editor-cards, .chop-controls { margin-top:10px; }
-    .control-row { display:flex; flex-wrap:wrap; align-items:end; gap:8px; }
-    .control-group { display:flex; flex-wrap:wrap; align-items:center; gap:6px; }
-    .control-label { font-size:10px; font-weight:800; letter-spacing:.12em; color:#8b9b9e; text-transform:uppercase; }
-    .time-field { width:95px; padding:7px 8px; }
-    .sample-field { width:180px; padding:7px 8px; }
-    .chop-count { width:64px; padding:7px 8px; }
-    .slice-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr)); gap:6px; max-height:280px; overflow-y:auto; margin-top:10px; }
-    .app-header { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:16px; }
-    .app-header > :last-child { justify-self:end; }
-    .tabs { justify-self:center; }
-    @media(max-width:760px) { .app-header { grid-template-columns:1fr auto; } .tabs { grid-column:1 / -1; grid-row:2; } }
-    .wave-meta { display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 12px; margin-top:7px; color:#83979a; font-size:11px; line-height:1.4; }
-    .transport-bar { display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:9px; margin-bottom:10px; border:1px solid #354146; border-radius:12px; background:#10181b; }
-    .transport-actions, .transport-zoom, .transport-stats { display:flex; align-items:center; flex-wrap:wrap; gap:8px; }
-    .transport-zoom { min-width:180px; flex:1 1 180px; }
-    .transport-zoom input { flex:1; min-width:70px; max-width:140px; }
-    .transport-stats { margin-left:auto; }
-    .transport-stats .stat { padding:7px 10px; }
-    .transport-stats .stat .time { font-size:14px; margin-top:3px; }
-    .btn-loop[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:#19210e; }
-    .editor-cards, .chop-controls { margin-top:10px; }
-    .fx-card-actions { display:flex; flex-wrap:wrap; gap:4px; margin:6px 0; }
-    .fx-drag-handle { cursor:grab; touch-action:none; }
-    .fx-drag-handle:active { cursor:grabbing; }
-    #fxList:empty { display:none; }
-    .fx-header { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-    .editor-columns { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; }
-    @media(max-width:800px) { .editor-columns { grid-template-columns:1fr; } }
-    .editor-section { margin-top:12px; padding-top:10px; border-top:1px solid #303c40; }
-    .editor-section summary { cursor:pointer; list-style:none; }
-    .editor-section summary::before { content:'▸'; display:inline-block; width:16px; }
-    .editor-section[open] summary::before { content:'▾'; }
-    .editor-settings { display:flex; flex-wrap:wrap; align-items:end; gap:10px; margin-top:9px; }
-    .editor-settings label { display:flex; flex-direction:column; gap:4px; min-width:85px; font-size:10px; color:#a8b7b4; }
-    .editor-settings input[type=range] { width:110px; }
-    .editor-settings input[type=number] { width:78px; padding:6px; }
-    .fx-param { min-width:145px; flex:1 1 145px; }
-    .fx-param > label { display:block; font-size:10px; color:#a8b7b4; margin-bottom:4px; }
-    .fx-param-controls { display:flex; align-items:center; gap:6px; }
-    .editor-settings .fx-param-controls input[type=range] { min-width:55px; width:100%; flex:1; }
-    .editor-settings .fx-param-controls input[type=number] { width:67px; flex:0 0 67px; padding:5px; }
-    .editor-settings output { color:#d8e9dc; font-variant-numeric:tabular-nums; }
-    .chop-layout { display:grid; grid-template-columns:minmax(240px, .9fr) minmax(280px, 1.1fr); gap:16px; }
-    .chop-options, .chop-library { min-width:0; }
-    .chop-group + .chop-group { border-top:1px solid #303c40; margin-top:12px; padding-top:12px; }
-    .chop-group .control-label { display:block; margin-bottom:7px; }
-    .sensitivity { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
-    .sensitivity input { max-width:200px; }
-    .slice-inspector { grid-column:1 / -1; padding-top:9px; border-top:1px solid #435543; }
-    .slice-inspector label { display:flex; flex-direction:column; gap:4px; }
-    .slice-list { display:flex; flex-direction:column; max-height:320px; min-height:60px; }
-    .slice-row .text-left { text-align:left; background:transparent; border:0; padding:0; color:inherit; }
-    @media(max-width:720px) { .chop-layout { grid-template-columns:1fr; } }
-    .pad-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; max-width:720px; margin-inline:auto; }
-    .pad-card { min-width:0; padding:7px; background:#111a1d; border:1px solid #344144; border-radius:12px; }
-    .pad-trigger { position:relative; overflow:hidden; width:100%; aspect-ratio:1 / 1; border:1px solid #536a50; border-radius:9px; background:#26372c; color:#e5f2db; text-align:left; padding:12px; display:flex; flex-direction:column; justify-content:space-between; touch-action:none; }
-    .pad-trigger.active { background:#6c944f; border-color:#c3ef7a; color:#101b0d; }
-    .pad-wave { position:absolute; inset:0; width:100%; height:100%; color:#a9d58d; opacity:.48; pointer-events:none; }
-    .pad-trigger.active .pad-wave { color:#294126; opacity:.6; }
-    .pad-key, .pad-name { position:relative; z-index:1; text-shadow:0 1px 3px #101a16; }
-    .pad-trigger.active .pad-key, .pad-trigger.active .pad-name { text-shadow:none; }
-    .pad-key { font-size:22px; font-weight:800; }
-    .pad-name { font-size:12px; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
-    .pad-top { position:relative; z-index:1; display:flex; align-items:flex-start; justify-content:space-between; gap:3px; }
-    .pad-midi { font-size:10px; font-weight:800; padding:3px 5px; border-radius:5px; color:#d8eacb; background:#101b18b8; white-space:nowrap; }
-    .pad-controls { display:flex; flex-wrap:nowrap; gap:3px; margin-top:5px; min-width:0; }
-    .pad-controls select { flex:1 1 0; width:0; min-width:0; padding:5px 1px; height:30px; font-size:10px; }
-    .pad-controls .btn { flex:0 0 28px; width:28px; min-height:30px; padding:0; }
-    .pad-controls .btn svg { width:14px; height:14px; }
-    .pad-controls .learning { color:#19210e; background:var(--accent); border-color:var(--accent); }
-    .play-controls { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px; margin-top:12px; }
-    @media(max-width:700px) { .editor-cards { grid-template-columns:1fr; } .pad-grid { gap:6px; } .pad-card { padding:5px; } .pad-trigger { padding:7px; aspect-ratio:1; } .pad-key { font-size:16px; } .pad-controls .btn { flex-basis:22px; width:22px; } .pad-controls .btn svg { width:12px; height:12px; } .pad-midi { font-size:8px; padding:2px; } }
-    @keyframes pulse { 50% { box-shadow:0 0 0 5px #fd827d15; } }
-    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
-  </style>
+  <link rel="stylesheet" href="./styles/app.css" />
+
 </head>
 <body>
   <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
     <symbol id="ic-play" viewBox="0 0 24 24"><path d="M8 5 19 12 8 19V5Z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+    <symbol id="ic-selection-play" viewBox="0 0 24 24"><path d="M4 5v14M20 5v14M9 7l7 5-7 5z"/></symbol>
+    <symbol id="ic-loop" viewBox="0 0 24 24"><path d="M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4m14-1v2a3 3 0 0 1-3 3H3"/></symbol>
+    <symbol id="ic-detect" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m14.5 14.5 5 5M7 10h2l1-3 2 6 1-3h1"/></symbol>
+    <symbol id="ic-speed" viewBox="0 0 24 24"><path d="M4 18a9 9 0 1 1 16 0M12 13l4-5M7 18h10"/><circle cx="12" cy="13" r="1"/></symbol>
+    <symbol id="ic-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="ic-start" viewBox="0 0 24 24"><path d="M5 5v14M19 12H8m0 0 4-4m-4 4 4 4"/></symbol>
+    <symbol id="ic-end" viewBox="0 0 24 24"><path d="M19 5v14M5 12h11m0 0-4-4m4 4-4 4"/></symbol>
+    <symbol id="ic-range" viewBox="0 0 24 24"><path d="M5 5v14m14-14v14M8 12h8m-8 0 3-3m-3 3 3 3m5-3-3-3m3 3-3 3"/></symbol>
     <symbol id="ic-stop" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2" fill="currentColor"/></symbol>
     <symbol id="ic-record" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="currentColor"/></symbol>
     <symbol id="ic-upload" viewBox="0 0 24 24"><path d="M12 16V3m0 0L7 8m5-5 5 5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></symbol>
@@ -177,9 +45,11 @@
     <symbol id="ic-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></symbol>
     <symbol id="ic-undo" viewBox="0 0 24 24"><path d="m9 14-6-5 6-5M3 9h10a8 8 0 0 1 0 16"/></symbol>
     <symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4 7h16m-14 0 1 14h10l1-14M9 7V4h6v3M10 11v7m4-7v7"/></symbol>
+    <symbol id="ic-power" viewBox="0 0 24 24"><path d="M12 3v9M6.5 6.5a8 8 0 1 0 11 0"/></symbol>
+    <symbol id="ic-reset" viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 2 7M4 4v6h6"/></symbol>
     <symbol id="ic-skip" viewBox="0 0 24 24"><path d="m5 5 12 7-12 7V5m13 0v14"/></symbol>
   </svg>
-  <div class="mx-auto w-full max-w-[1530px] px-4 pb-10 pt-5 sm:px-7 sm:pt-8 lg:px-10">
+  <div class="app-container mx-auto w-full max-w-[1530px] px-4 pb-10 sm:px-7 lg:px-10">
     <header class="mb-7 app-header">
       <div class="flex items-center gap-3">
         <div class="flex h-10 w-10 items-center justify-center rounded-xl border border-[#536840] bg-[#273426]" aria-hidden="true"><svg width="25" height="25" viewBox="0 0 25 25" fill="none"><path d="M2 12.5h3l2.5-8 4.5 16L16 7l2 5.5h5" stroke="#c3ef7a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -215,9 +85,10 @@
     <main id="view-editor" role="tabpanel" aria-labelledby="tab-editor" hidden>
         <section id="wave-panel" class="panel p-4 sm:p-6" aria-label="Sample waveform editor">
           <div class="transport-bar" aria-label="Playback and waveform controls">
-            <div class="transport-actions"><button id="importBtn" class="btn btn-quiet" type="button"><svg class="h-4 w-4 fill-none stroke-current stroke-[1.8]"><use href="#ic-upload"/></svg>Import</button><button id="exampleBtn" class="btn btn-quiet" type="button">Example</button><button id="recordBtn" class="btn btn-record min-w-[135px]" type="button" disabled><svg class="h-[14px] w-[14px]"><use href="#ic-record"/></svg><span id="recordLabel">Record sample</span></button><button id="playBtn" class="btn" type="button" disabled><svg class="h-[14px] w-[14px]"><use href="#ic-play"/></svg>Play all</button><button id="playSelectionBtn" class="btn btn-quiet" type="button" disabled>Play selection</button><button id="stopBtn" class="btn btn-quiet" type="button" disabled><svg class="h-[13px] w-[13px]"><use href="#ic-stop"/></svg>Stop</button><button id="loopBtn" class="btn btn-quiet btn-loop" type="button" aria-pressed="false">Loop</button><button id="exportBtn" class="btn btn-quiet" type="button" disabled><svg class="h-4 w-4 fill-none stroke-current stroke-[1.8]"><use href="#ic-download"/></svg>Export WAV</button></div>
+            <div class="transport-actions"><button id="importBtn" class="btn btn-quiet" type="button"><svg class="h-4 w-4 fill-none stroke-current stroke-[1.8]"><use href="#ic-upload"/></svg>Import</button><button id="exampleBtn" class="btn btn-quiet" type="button">Example</button><button id="recordBtn" class="btn btn-record min-w-[135px]" type="button" disabled><svg class="h-[14px] w-[14px]"><use href="#ic-record"/></svg><span id="recordLabel">Record sample</span></button><button id="playBtn" class="btn transport-icon" type="button" title="Play all" aria-label="Play all" disabled><svg aria-hidden="true"><use href="#ic-play"/></svg></button><button id="playSelectionBtn" class="btn btn-quiet transport-icon" type="button" title="Play selection" aria-label="Play selection" disabled><svg aria-hidden="true"><use href="#ic-selection-play"/></svg></button><button id="stopBtn" class="btn btn-quiet transport-icon" type="button" title="Stop" aria-label="Stop" disabled><svg aria-hidden="true"><use href="#ic-stop"/></svg></button><button id="loopBtn" class="btn btn-quiet btn-loop transport-icon" type="button" title="Loop" aria-label="Loop" aria-pressed="false"><svg aria-hidden="true"><use href="#ic-loop"/></svg></button><button id="exportBtn" class="btn btn-quiet transport-icon" type="button" title="Export WAV" aria-label="Export WAV" disabled><svg aria-hidden="true"><use href="#ic-download"/></svg></button></div>
+            <div class="transport-bpm"><label for="bpm" class="eyebrow">BPM</label><input id="bpm" class="field time-field" type="number" min="40" max="240" step="0.1" value="120" aria-label="Tempo in beats per minute"/><button id="tempoSpeedToggle" class="btn btn-quiet btn-sm btn-loop transport-icon" type="button" title="Change audio speed when BPM changes" aria-label="Change audio speed when BPM changes" aria-pressed="false"><svg aria-hidden="true"><use href="#ic-speed"/></svg></button><button id="detectBpm" class="btn btn-quiet btn-sm transport-icon" type="button" title="Detect BPM" aria-label="Detect BPM" disabled><svg aria-hidden="true"><use href="#ic-detect"/></svg></button></div>
             <div class="transport-zoom"><label for="zoom" class="eyebrow">ZOOM</label><input id="zoom" type="range" min="1" max="16" step="1" value="1" disabled/><span id="zoomLabel" class="time text-[11px]">1×</span></div>
-            <div class="transport-stats"><div class="stat"><div class="eyebrow">DURATION</div><div id="durationStat" class="time font-bold">0.00 s</div></div><div class="stat"><div class="eyebrow">SELECTION START</div><div id="startStat" class="time font-bold">0.00 s</div></div><div class="stat"><div class="eyebrow">SELECTION END</div><div id="endStat" class="time font-bold">0.00 s</div></div><div class="stat"><div class="eyebrow">SELECTED</div><div id="rangeStat" class="time font-bold text-[#c3ef7a]">0.00 s</div></div></div>
+            <div class="transport-stats"><div class="stat" title="Duration" aria-label="Duration"><svg class="stat-icon" aria-hidden="true"><use href="#ic-clock"/></svg><div id="durationStat" class="time font-bold">0.00 s</div></div><div class="stat" title="Selection start" aria-label="Selection start"><svg class="stat-icon" aria-hidden="true"><use href="#ic-start"/></svg><div id="startStat" class="time font-bold">0.00 s</div></div><div class="stat" title="Selection end" aria-label="Selection end"><svg class="stat-icon" aria-hidden="true"><use href="#ic-end"/></svg><div id="endStat" class="time font-bold">0.00 s</div></div><div class="stat" title="Selected duration" aria-label="Selected duration"><svg class="stat-icon" aria-hidden="true"><use href="#ic-range"/></svg><div id="rangeStat" class="time font-bold text-[#c3ef7a]">0.00 s</div></div></div>
             <span id="recMessage" class="text-[11px] text-[#90a1a4]">Connect a source to record</span><span id="counter" class="time text-[18px] font-bold">00:00.00</span>
           </div>
           <div class="wave-shell"><canvas id="waveCanvas" aria-label="Audio waveform. Drag to select a region, click to set the playhead, double click to select all."></canvas><div id="emptyWave" class="wave-empty"><div class="mb-1 rounded-xl border border-[#3b4c4b] bg-[#22312c] p-3 text-[#c3ef7a]"><svg class="h-7 w-7 fill-none stroke-current stroke-[1.6]"><use href="#ic-cut"/></svg></div><div class="text-[15px] font-bold text-[#c6d7d0]">Your waveform starts here</div><div class="max-w-[330px] text-[12px] leading-5 text-[#6d8587]">Connect a source and record, or drop an audio file onto the page.</div></div></div>
@@ -233,11 +104,12 @@
               <label><span class="control-label">End (s)</span><input id="selectionEnd" class="field time-field" type="number" step="0.001" min="0" disabled/></label>
               <div class="control-group"><button id="inBtn" class="btn btn-quiet btn-sm" type="button" disabled>IN at cursor</button><button id="outBtn" class="btn btn-quiet btn-sm" type="button" disabled>OUT at cursor</button><button id="allBtn" class="btn btn-quiet btn-sm" type="button" disabled>Select all</button></div>
             </div>
+            <details class="editor-section" open><summary class="control-label">Sound position</summary><div class="control-group mt-2"><label><span class="control-label">Timeline length (s)</span><input id="timelineLength" class="field time-field" type="number" min="0.01" max="180" step="0.001" disabled/></label><label><span class="control-label">Sound start (s)</span><input id="soundStart" class="field time-field" type="number" step="0.001" disabled/></label><label><span class="control-label">Sound length (s)</span><input id="soundLength" class="field time-field" type="number" min="0.015" step="0.001" disabled/></label><span class="text-[11px] text-[#8da0a3]">Drag the sound bar to move it; drag either edge to stretch.</span></div></details>
             <details class="editor-section" open><summary class="control-label">Edit selection</summary><div class="control-group mt-2"><button id="cropBtn" class="btn btn-primary btn-sm" type="button" disabled>Crop</button><button id="deleteBtn" class="btn btn-quiet btn-sm" type="button" disabled>Delete</button><button id="reverseBtn" class="btn btn-quiet btn-sm" type="button" disabled>Reverse</button><button id="silenceBtn" class="btn btn-quiet btn-sm" type="button" disabled>Silence</button><button id="normalizeBtn" class="btn btn-quiet btn-sm" type="button" disabled title="Normalize the entire sample">Normalize sample</button><button id="undoBtn" class="btn btn-quiet btn-sm" type="button" disabled>Undo</button><button id="exportSelectionBtn" class="btn btn-quiet btn-sm" type="button" disabled>Export selection WAV</button></div></details>
             <details class="editor-section"><summary class="control-label">5-band EQ</summary><div class="editor-settings"><div class="control-label" style="flex-basis:100%">Low shelf</div><div class="fx-param"><label for="eqLowFreq">Frequency (Hz)</label><div class="fx-param-controls"><input id="eqLowFreqSlider" type="range" min="20" max="20000" step="any" value="100" aria-label="Low shelf Frequency (Hz) slider"/><input id="eqLowFreq" class="field" type="number" min="20" max="20000" step="1" value="100" aria-label="Low shelf Frequency (Hz) value"/></div></div><div class="fx-param"><label for="eqLowGain">Gain (dB)</label><div class="fx-param-controls"><input id="eqLowGainSlider" type="range" min="-24" max="24" step="any" value="0" aria-label="Low shelf Gain (dB) slider"/><input id="eqLowGain" class="field" type="number" min="-24" max="24" step="0.1" value="0" aria-label="Low shelf Gain (dB) value"/></div></div><div class="control-label" style="flex-basis:100%">Low mid</div><div class="fx-param"><label for="eqLowMidFreq">Frequency (Hz)</label><div class="fx-param-controls"><input id="eqLowMidFreqSlider" type="range" min="20" max="20000" step="any" value="350" aria-label="Low mid Frequency (Hz) slider"/><input id="eqLowMidFreq" class="field" type="number" min="20" max="20000" step="1" value="350" aria-label="Low mid Frequency (Hz) value"/></div></div><div class="fx-param"><label for="eqLowMidGain">Gain (dB)</label><div class="fx-param-controls"><input id="eqLowMidGainSlider" type="range" min="-24" max="24" step="any" value="0" aria-label="Low mid Gain (dB) slider"/><input id="eqLowMidGain" class="field" type="number" min="-24" max="24" step="0.1" value="0" aria-label="Low mid Gain (dB) value"/></div></div><div class="fx-param"><label for="eqLowMidQ">Q</label><div class="fx-param-controls"><input id="eqLowMidQSlider" type="range" min="0.1" max="20" step="any" value="1" aria-label="Low mid Q slider"/><input id="eqLowMidQ" class="field" type="number" min="0.1" max="20" step="0.1" value="1" aria-label="Low mid Q value"/></div></div><div class="control-label" style="flex-basis:100%">Mid</div><div class="fx-param"><label for="eqMidFreq">Frequency (Hz)</label><div class="fx-param-controls"><input id="eqMidFreqSlider" type="range" min="20" max="20000" step="any" value="1000" aria-label="Mid Frequency (Hz) slider"/><input id="eqMidFreq" class="field" type="number" min="20" max="20000" step="1" value="1000" aria-label="Mid Frequency (Hz) value"/></div></div><div class="fx-param"><label for="eqMidGain">Gain (dB)</label><div class="fx-param-controls"><input id="eqMidGainSlider" type="range" min="-24" max="24" step="any" value="0" aria-label="Mid Gain (dB) slider"/><input id="eqMidGain" class="field" type="number" min="-24" max="24" step="0.1" value="0" aria-label="Mid Gain (dB) value"/></div></div><div class="fx-param"><label for="eqMidQ">Q</label><div class="fx-param-controls"><input id="eqMidQSlider" type="range" min="0.1" max="20" step="any" value="1" aria-label="Mid Q slider"/><input id="eqMidQ" class="field" type="number" min="0.1" max="20" step="0.1" value="1" aria-label="Mid Q value"/></div></div><div class="control-label" style="flex-basis:100%">High mid</div><div class="fx-param"><label for="eqHighMidFreq">Frequency (Hz)</label><div class="fx-param-controls"><input id="eqHighMidFreqSlider" type="range" min="20" max="20000" step="any" value="4000" aria-label="High mid Frequency (Hz) slider"/><input id="eqHighMidFreq" class="field" type="number" min="20" max="20000" step="1" value="4000" aria-label="High mid Frequency (Hz) value"/></div></div><div class="fx-param"><label for="eqHighMidGain">Gain (dB)</label><div class="fx-param-controls"><input id="eqHighMidGainSlider" type="range" min="-24" max="24" step="any" value="0" aria-label="High mid Gain (dB) slider"/><input id="eqHighMidGain" class="field" type="number" min="-24" max="24" step="0.1" value="0" aria-label="High mid Gain (dB) value"/></div></div><div class="fx-param"><label for="eqHighMidQ">Q</label><div class="fx-param-controls"><input id="eqHighMidQSlider" type="range" min="0.1" max="20" step="any" value="1" aria-label="High mid Q slider"/><input id="eqHighMidQ" class="field" type="number" min="0.1" max="20" step="0.1" value="1" aria-label="High mid Q value"/></div></div><div class="control-label" style="flex-basis:100%">High shelf</div><div class="fx-param"><label for="eqHighFreq">Frequency (Hz)</label><div class="fx-param-controls"><input id="eqHighFreqSlider" type="range" min="20" max="20000" step="any" value="10000" aria-label="High shelf Frequency (Hz) slider"/><input id="eqHighFreq" class="field" type="number" min="20" max="20000" step="1" value="10000" aria-label="High shelf Frequency (Hz) value"/></div></div><div class="fx-param"><label for="eqHighGain">Gain (dB)</label><div class="fx-param-controls"><input id="eqHighGainSlider" type="range" min="-24" max="24" step="any" value="0" aria-label="High shelf Gain (dB) slider"/><input id="eqHighGain" class="field" type="number" min="-24" max="24" step="0.1" value="0" aria-label="High shelf Gain (dB) value"/></div></div><button id="eqApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable EQ</button><button id="eqResetBtn" class="btn btn-quiet btn-sm" type="button" disabled>Reset EQ</button></div></details>
             <details class="editor-section"><summary class="control-label">Quality / resample</summary><div class="editor-settings"><label>Sample rate (Hz)<select id="resampleRate" class="field"><option value="4000">4000</option><option value="5000">5000</option><option value="6000">6000</option><option value="7350">7350</option><option value="8000">8000</option><option value="10000">10000</option><option value="11025">11025</option><option value="12000">12000</option><option value="12500">12500</option><option value="16000">16000</option><option value="22050">22050</option><option value="24000">24000</option><option value="31250">31250</option><option value="32000">32000</option><option value="44100" selected>44100</option><option value="48000">48000</option><option value="88200">88200</option><option value="96000">96000</option></select></label><label>Quality<select id="resampleQuality" class="field"><option value="16">Standard</option><option value="32" selected>High</option><option value="64">Best</option></select></label><button id="qualityApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable resampling</button><button id="qualityResetBtn" class="btn btn-quiet btn-sm" type="button" title="Reset resampling; WAV format and channels stay unchanged" disabled>Reset quality</button><label>WAV export<select id="exportDepth" class="field"><option value="8">8-bit PCM</option><option value="16" selected>16-bit PCM</option><option value="24">24-bit PCM</option><option value="32">32-bit float</option></select></label><label>Channels<select id="exportChannels" class="field"><option value="original">Original</option><option value="mono">Mono</option></select></label></div><p class="text-[11px] text-[#8da0a3] mt-2">Enable resampling and apply the chain to set the WAV rate; format and channels apply to all downloads. Live FX run at the playback device rate.</p></details>
             </div><div class="editor-fx"><div class="fx-header"><div class="control-label">FX</div><button id="fxResetBtn" class="btn btn-quiet btn-sm" type="button" title="Reset effects to the original sound" disabled>Reset</button></div>
-            <details class="editor-section"><summary class="control-label">Pitch / time</summary><div class="editor-settings"><div class="fx-param"><label for="pitchSemitones">Semitones</label><div class="fx-param-controls"><input id="pitchSemitonesSlider" type="range" min="-12" max="12" step="any" value="0" aria-label="Semitones slider"/><input id="pitchSemitones" class="field" type="number" min="-12" max="12" step="1" value="0" aria-label="Semitones value"/></div></div><div class="fx-param"><label for="pitchCents">Cents</label><div class="fx-param-controls"><input id="pitchCentsSlider" type="range" min="-100" max="100" step="any" value="0" aria-label="Cents slider"/><input id="pitchCents" class="field" type="number" min="-100" max="100" step="1" value="0" aria-label="Cents value"/></div></div><div class="fx-param"><label for="stretchSpeed">Speed (%)</label><div class="fx-param-controls"><input id="stretchSpeedSlider" type="range" min="50" max="200" step="any" value="100" aria-label="Speed slider"/><input id="stretchSpeed" class="field" type="number" min="50" max="200" step="1" value="100" aria-label="Speed value"/></div></div><button id="pitchApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable</button></div><p class="text-[11px] text-[#8da0a3] mt-2">Pitch and speed are independent. Slice positions follow speed changes.</p></details>
+            <details class="editor-section"><summary class="control-label">Pitch</summary><div class="editor-settings"><div class="fx-param"><label for="pitchSemitones">Semitones</label><div class="fx-param-controls"><input id="pitchSemitonesSlider" type="range" min="-12" max="12" step="any" value="0" aria-label="Semitones slider"/><input id="pitchSemitones" class="field" type="number" min="-12" max="12" step="1" value="0" aria-label="Semitones value"/></div></div><div class="fx-param"><label for="pitchCents">Cents</label><div class="fx-param-controls"><input id="pitchCentsSlider" type="range" min="-100" max="100" step="any" value="0" aria-label="Cents slider"/><input id="pitchCents" class="field" type="number" min="-100" max="100" step="1" value="0" aria-label="Cents value"/></div></div><button id="pitchApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable</button></div></details>
             <details class="editor-section"><summary class="control-label">Reverb</summary><div class="editor-settings"><label>Type<select id="reverbType" class="field" aria-label="Reverb type"><option value="room">Room</option><option value="hall" selected>Hall</option><option value="chamber">Chamber</option><option value="plate">Plate</option></select></label><div class="fx-param"><label for="reverbDecay">Decay (s)</label><div class="fx-param-controls"><input id="reverbDecaySlider" type="range" min="0.1" max="8" step="any" value="1.5" aria-label="Decay slider"/><input id="reverbDecay" class="field" type="number" min="0.1" max="8" step="0.1" value="1.5" aria-label="Decay value"/></div></div><div class="fx-param"><label for="reverbPredelay">Pre-delay (ms)</label><div class="fx-param-controls"><input id="reverbPredelaySlider" type="range" min="0" max="250" step="any" value="20" aria-label="Pre-delay slider"/><input id="reverbPredelay" class="field" type="number" min="0" max="250" step="1" value="20" aria-label="Pre-delay value"/></div></div><div class="fx-param"><label for="reverbTone">Tone (Hz)</label><div class="fx-param-controls"><input id="reverbToneSlider" type="range" min="200" max="20000" step="any" value="6000" aria-label="Tone slider"/><input id="reverbTone" class="field" type="number" min="200" max="20000" step="100" value="6000" aria-label="Tone value"/></div></div><div class="fx-param"><label for="reverbMix">Mix (%)</label><div class="fx-param-controls"><input id="reverbMixSlider" type="range" min="0" max="100" step="any" value="30" aria-label="Mix slider"/><input id="reverbMix" class="field" type="number" min="0" max="100" step="1" value="30" aria-label="Mix value"/></div></div><button id="reverbApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable</button></div></details>
             <details class="editor-section"><summary class="control-label">Delay</summary><div class="editor-settings"><label>Type<select id="delayType" class="field" aria-label="Delay type"><option value="digital">Digital</option><option value="analog">Analog</option><option value="tape">Tape</option><option value="pingpong">Ping-pong</option></select></label><div class="fx-param"><label for="delayTime">Time (ms)</label><div class="fx-param-controls"><input id="delayTimeSlider" type="range" min="1" max="2000" step="any" value="250" aria-label="Time slider"/><input id="delayTime" class="field" type="number" min="1" max="2000" step="1" value="250" aria-label="Time value"/></div></div><div class="fx-param"><label for="delayFeedback">Feedback (%)</label><div class="fx-param-controls"><input id="delayFeedbackSlider" type="range" min="0" max="90" step="any" value="35" aria-label="Feedback slider"/><input id="delayFeedback" class="field" type="number" min="0" max="90" step="1" value="35" aria-label="Feedback value"/></div></div><div class="fx-param"><label for="delayTone">Tone (Hz)</label><div class="fx-param-controls"><input id="delayToneSlider" type="range" min="200" max="20000" step="any" value="6000" aria-label="Tone slider"/><input id="delayTone" class="field" type="number" min="200" max="20000" step="100" value="6000" aria-label="Tone value"/></div></div><div class="fx-param"><label for="delayMix">Mix (%)</label><div class="fx-param-controls"><input id="delayMixSlider" type="range" min="0" max="100" step="any" value="30" aria-label="Mix slider"/><input id="delayMix" class="field" type="number" min="0" max="100" step="1" value="30" aria-label="Mix value"/></div></div><button id="delayApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable</button></div></details>
             <details class="editor-section"><summary class="control-label">Distortion</summary><div class="editor-settings"><label>Type<select id="distType" class="field"><option value="soft">Soft saturation</option><option value="hard">Hard clip</option><option value="fold">Wavefold</option><option value="crusher">Bitcrusher</option></select></label><div class="fx-param"><label for="distDrive">Drive (dB)</label><div class="fx-param-controls"><input id="distDriveSlider" type="range" min="0" max="36" step="any" value="6" aria-label="Drive slider"/><input id="distDrive" class="field" type="number" min="0" max="36" step="1" value="6" aria-label="Drive value"/></div></div><div class="fx-param"><label for="distTone">Tone (Hz)</label><div class="fx-param-controls"><input id="distToneSlider" type="range" min="200" max="20000" step="any" value="12000" aria-label="Tone slider"/><input id="distTone" class="field" type="number" min="200" max="20000" step="100" value="12000" aria-label="Tone value"/></div></div><div class="fx-param"><label for="distBits">Resolution (bits)</label><div class="fx-param-controls"><input id="distBitsSlider" type="range" min="2" max="16" step="any" value="8" aria-label="Resolution slider"/><input id="distBits" class="field" type="number" min="2" max="16" step="1" value="8" aria-label="Resolution value"/></div></div><div class="fx-param"><label for="distDownsample">Downsample (×)</label><div class="fx-param-controls"><input id="distDownsampleSlider" type="range" min="1" max="32" step="any" value="1" aria-label="Downsample slider"/><input id="distDownsample" class="field" type="number" min="1" max="32" step="1" value="1" aria-label="Downsample value"/></div></div><div class="fx-param"><label for="distMix">Mix (%)</label><div class="fx-param-controls"><input id="distMixSlider" type="range" min="0" max="100" step="any" value="50" aria-label="Mix slider"/><input id="distMix" class="field" type="number" min="0" max="100" step="1" value="50" aria-label="Mix value"/></div></div><button id="distortionApplyBtn" class="btn btn-quiet btn-sm btn-loop" type="button" aria-pressed="false" disabled>Enable</button></div></details>
@@ -271,6 +143,6 @@
   <input id="fileInput" type="file" accept="audio/*,.wav,.mp3,.ogg,.flac,.m4a,.webm" hidden />
   <div id="dropOverlay" class="drop-overlay">Drop audio to edit</div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="./app.js" defer></script>
+  <script type="module" src="./main.ts"></script>
 </body>
 </html>

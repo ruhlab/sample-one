@@ -1,4 +1,6 @@
 class DistortionProcessor extends AudioWorkletProcessor {
+  phase: number;
+  held: number[];
   static get parameterDescriptors(){return [{name:'drive',defaultValue:0,minValue:0,maxValue:36,automationRate:'k-rate'},{name:'bits',defaultValue:8,minValue:2,maxValue:16,automationRate:'k-rate'},{name:'downsample',defaultValue:1,minValue:1,maxValue:32,automationRate:'k-rate'},{name:'mode',defaultValue:0,minValue:0,maxValue:3,automationRate:'k-rate'}];}
   constructor(){super();this.phase=0;this.held=[];}
   process(inputs,outputs,parameters){
