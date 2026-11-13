@@ -198,11 +198,44 @@
           </button>
         </nav>
         <div class="flex items-center gap-3">
-          <span class="hidden text-[11px] text-[#728287] sm:inline"
-            >LOCAL AUDIO WORKSTATION</span
-          ><span id="sourceBadge" class="pill"
+          <span id="sourceBadge" class="pill"
             ><span class="dot"></span
             ><span id="sourceLabel">Source disconnected</span></span
+          >
+          <button
+            class="btn btn-quiet btn-sm project-icon-button"
+            id="project-import"
+            type="button"
+            title="Import project"
+            aria-label="Import project"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path d="M12 3v12m0 0 4-4m-4 4-4-4M4 16v4h16v-4" />
+            </svg></button
+          ><button
+            class="btn btn-quiet btn-sm project-icon-button"
+            id="project-export"
+            type="button"
+            title="Export project"
+            aria-label="Export project"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path d="M12 16V4m0 0 4 4m-4-4L8 8M4 16v4h16v-4" />
+            </svg></button
+          ><a class="btn btn-quiet btn-sm project-link" href="./index.html"
+            >← All projects</a
           >
         </div>
       </header>
@@ -2139,6 +2172,7 @@
         >
       </footer>
     </div>
+    <input type="file" id="project-file" accept=".zip,application/zip" hidden />
     <input
       id="fileInput"
       type="file"

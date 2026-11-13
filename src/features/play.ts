@@ -340,6 +340,17 @@ export function createPlayFeature({
       toast("MIDI access was denied or unavailable.");
     }
   }
+  async function restoreMidi() {
+    if (!navigator.requestMIDIAccess) return false;
+    try {
+      if (!state.midi) state.midi = await navigator.requestMIDIAccess();
+      state.midi.onstatechange = connectMidiInputs;
+      connectMidiInputs();
+      return true;
+    } catch {
+      return false;
+    }
+  }
   function connectMidiInputs() {
     if (state.midi)
       for (const input of state.midi.inputs.values())
@@ -388,5 +399,6 @@ export function createPlayFeature({
     triggerPad,
     releasePad,
     renderPads,
+    restoreMidi,
   };
 }

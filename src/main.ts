@@ -1,3 +1,4 @@
+import { setupSliderReset } from "./features/slider-reset.ts";
 import { state } from "./state.ts";
 import { createEditorFeature } from "./features/editor.ts";
 import { createChopFeature } from "./features/chop.ts";
@@ -11,6 +12,11 @@ import { estimateBpm } from "./audio/tempo.ts";
 import { stretchPitch } from "./audio/stretch.ts";
 import { encodeWav } from "./audio/wav.ts";
 import { buildZip } from "./audio/zip.ts";
+import {
+  exportProject,
+  importProject,
+  downloadProject,
+} from "./audio/project.ts";
 import {
   createEqStage,
   setEqStage,
@@ -1587,6 +1593,7 @@ const {
   triggerPad,
   releasePad,
   renderPads,
+  restoreMidi,
 } = createPlayFeature({
   state,
   $,
@@ -1706,6 +1713,174 @@ const { viewport, timeAtPixel, xForTime, drawWave, animate } =
     clock,
   });
 
+const projectStateKeys = [
+  "buffer",
+  "originalBuffer",
+  "fxBase",
+  "fxRendered",
+  "fxChain",
+  "fxDraft",
+  "fxNextId",
+  "bpm",
+  "tempoRate",
+  "tempoChangesSpeed",
+  "placement",
+  "name",
+  "selection",
+  "cursor",
+  "slices",
+  "nextId",
+  "undo",
+  "selectedSliceId",
+  "selectedSliceEdge",
+  "bank",
+  "transportLoop",
+  "zoom",
+  "viewFraction",
+];
+$("project-export").addEventListener("click", () => {
+  if (
+    state.processing ||
+    state.fxRenderPending ||
+    state.recorder?.state === "recording" ||
+    state.recordBusy
+  ) {
+    toast("Wait for audio processing or recording to finish.");
+    return;
+  }
+  try {
+    const data = Object.fromEntries(
+      projectStateKeys.map((key) => [key, state[key]]),
+    );
+    const controls = Object.fromEntries(
+      [
+        ...document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(
+          "input[id]:not([type=file]), select[id]",
+        ),
+      ].map((el) => [
+        el.id,
+        { value: el.value, checked: "checked" in el ? el.checked : false },
+      ]),
+    );
+    downloadProject(
+      exportProject("sampler", {
+        data,
+        controls,
+        tab: state.tab,
+        padConfig: [...state.padConfig],
+      }),
+      `${safeName(state.name)}-project.zip`,
+    );
+    toast("Project exported.");
+  } catch (error) {
+    toast(`Project export failed: ${error.message}`);
+  }
+});
+$("project-import").addEventListener("click", () => $("project-file").click());
+$("project-file").addEventListener("change", async (event) => {
+  const input = event.target as HTMLInputElement,
+    file = input.files?.[0];
+  input.value = "";
+  if (!file) return;
+  if (
+    state.processing ||
+    state.recorder?.state === "recording" ||
+    state.recordBusy
+  ) {
+    toast("Wait for audio processing or recording to finish.");
+    return;
+  }
+  try {
+    const ac = await audioContext();
+    const saved = importProject(
+        new Uint8Array(await file.arrayBuffer()),
+        "sampler",
+        ac,
+      ),
+      data = saved.data;
+    const validBuffer = (value) =>
+      value === null || value instanceof AudioBuffer;
+    if (
+      !data ||
+      ![data.buffer, data.originalBuffer, data.fxBase, data.fxRendered].every(
+        validBuffer,
+      ) ||
+      (data.buffer && !data.fxBase) ||
+      !Array.isArray(data.slices) ||
+      !Array.isArray(data.undo) ||
+      !Array.isArray(data.fxChain) ||
+      !Array.isArray(data.fxDraft) ||
+      !data.selection ||
+      !Array.isArray(saved.padConfig) ||
+      !["capture", "editor", "chop", "play"].includes(saved.tab)
+    )
+      throw new Error("Invalid sampler project state.");
+    const fxTypes = [
+      "quality",
+      "pitch",
+      "eq",
+      "reverb",
+      "delay",
+      "distortion",
+      "compressor",
+    ];
+    if (
+      [...data.fxChain, ...data.fxDraft].some(
+        (effect) =>
+          !effect || !fxTypes.includes(effect.type) || !effect.settings,
+      )
+    )
+      throw new Error("Invalid project effects.");
+    if (
+      data.buffer &&
+      (!data.placement ||
+        !Number.isFinite(data.placement.start) ||
+        !Number.isFinite(data.placement.end))
+    )
+      throw new Error("Invalid project timeline.");
+    const configs = new Map(saved.padConfig);
+    stopPads();
+    stopPlayback();
+    stopEffectPreview();
+    clearTimeout(state.fxPreviewTimer);
+    state.fxRenderVersion++;
+    state.bpmGeneration++;
+    state.bpmDetecting = false;
+    state.fxRenderPending = false;
+    state.fxRenderError = null;
+    for (const key of projectStateKeys) state[key] = data[key];
+    state.padConfig = configs;
+    if (state.fxBase) setResampleRate(state.fxBase.sampleRate);
+    syncEffectControls();
+    for (const [id, value] of Object.entries(saved.controls || {})) {
+      const el = document.getElementById(id) as
+        HTMLInputElement | HTMLSelectElement;
+      if (el && el.type !== "file" && value && typeof value === "object") {
+        const control = value as { value: string; checked: boolean };
+        el.value = control.value;
+        if ("checked" in el) el.checked = control.checked;
+      }
+    }
+    setDetectBpmLabel(false);
+    updatePeaks();
+    renderSlices();
+    selectTab(saved.tab);
+    updateUI();
+    els.counter.textContent = clock(state.buffer?.duration || 0);
+    if (state.fxBase && state.fxDraft.length && !state.fxRendered)
+      queueFxRender();
+    if (
+      [...state.padConfig.values()].some((config) => config?.midi) &&
+      !(await restoreMidi())
+    ) {
+      toast("Project imported; MIDI access was unavailable.");
+    } else toast("Project imported. Reconnect audio inputs if needed.");
+  } catch (error) {
+    toast(`Project import failed: ${error.message}`);
+  }
+});
+
+setupSliderReset();
 setupEffectChain();
 setupViews();
 wireEvents();

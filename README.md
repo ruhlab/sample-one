@@ -11,14 +11,14 @@ bun install --frozen-lockfile
 bun run dev
 ```
 
-Open `http://127.0.0.1:3000/`. Development requests rebuild the app from `src`, so refresh after making changes. `bun run start` builds once and serves the result. Set `PORT` or `HOST` to override the server defaults. The `/health` endpoint reports server status.
+Open `http://127.0.0.1:3000/` to choose the sampler or pad player. The projects are also available directly at `/sampler.html` and `/player.html`. Development requests rebuild the app from `src`, so refresh after making changes. `bun run start` builds once and serves the result. Set `PORT` or `HOST` to override the server defaults. The `/health` endpoint reports server status.
 
 Tailwind CSS is installed locally and compiled at build time. The app does not load Tailwind from a CDN. Browser capture, AudioWorklet and MIDI features require localhost or HTTPS; availability depends on the browser and OS.
 
 ## Build and test
 
 ```sh
-bun run build    # create dist/index.html and dist/assets/drum.wav
+bun run build    # create the three HTML pages and dist/assets/drum.wav
 bun test         # run audio utility tests
 bun run typecheck # check TypeScript
 bun fmt          # format project files
@@ -27,12 +27,19 @@ bun fmt --check  # check formatting without writing files
 
 The TypeScript configuration is currently permissive; parts of the existing UI and shared state still need more specific types.
 
-The HTML embeds the app, compiled styles, workers, audio worklets, Signalsmith Stretch and icons. The example audio is loaded separately from `assets/drum.wav`; deploy it alongside the HTML. The social preview image must also be hosted separately.
+Each HTML page embeds its app, compiled styles, workers, audio worklets, Signalsmith Stretch and icons. The example audio is loaded separately from `assets/drum.wav`; deploy it alongside the HTML. The social preview image must also be hosted separately.
 
 GitHub Pages deploys via `.github/workflows/pages.yml` on pushes to `main` or manual runs. In repository settings, select **Pages → Build and deployment → Source → GitHub Actions**. The workflow builds the standalone HTML and publishes `src/assets/social-card.png` alongside it.
 
+## Projects
+
+Use the import and export icons in either workstation header to save or reopen a project ZIP. The archive contains a versioned `project.json` and lossless float audio data; sampler and pad-player projects are specific to their respective workstations. Audio inputs need to be reconnected after reopening. Project files remain on your device.
+
+In the pad player, importing a sampler slice ZIP into an occupied kit offers a choice to replace the kit or fill empty pads, adding banks as needed. With no pad selected, general options control master volume, the default playback mode for newly loaded pads, and MIDI mapping. MIDI assignments are shared by pad position across banks by default; individual-bank mappings and browser-local persistence are optional. Player projects include the master, default mode, and MIDI mappings. The general panel also offers BPM, a metronome, and a four-beat recording count-in. Metronome and count-in clicks are heard through the output but excluded from recorded WAVs. In MIDI Learn, assign notes or CC buttons to transport controls and MIDI CC knobs to master volume and BPM. BPM follows controller movement in one-BPM steps. Select momentary or toggle CC button behavior to match your controller. General Log and MIDI Log enable diagnostic messages in the browser console. General options are automatically saved in browser localStorage; MIDI assignments are stored only when MIDI preservation is enabled. A restored enabled metronome starts after the first user interaction, as required by browser audio policies.
+
 ## Features
 
+- **Pad player:** load individual audio files or a sampler-exported ZIP into independent pads, edit their controls, perform with keyboard or MIDI, and record the mix to stereo WAV. Kits remain in memory until the page is left or reloaded. Recording uses AudioWorklet and requires a compatible browser on localhost or HTTPS.
 - **Capture:** record tab or input audio, import a file, or load the example.
 - **Editor:** select and edit audio, move and stretch the sound within a timeline, estimate BPM, and audition an ordered FX chain. Effects include EQ, pitch, resampling, reverb, delay, distortion and compression. Applied effects remain editable from the retained source.
 - **Chop:** create equal or transient slices, move boundaries, rename slices, set fades, and export WAV or ZIP.

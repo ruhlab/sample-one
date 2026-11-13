@@ -22,6 +22,8 @@ function build(): Promise<void> {
 const files = new Map([
   ["/", ["dist/index.html", "text/html; charset=utf-8"]],
   ["/index.html", ["dist/index.html", "text/html; charset=utf-8"]],
+  ["/sampler.html", ["dist/sampler.html", "text/html; charset=utf-8"]],
+  ["/player.html", ["dist/player.html", "text/html; charset=utf-8"]],
   ["/assets/drum.wav", ["dist/assets/drum.wav", "audio/wav"]],
   ["/social-card.png", ["src/assets/social-card.png", "image/png"]],
 ]);
@@ -44,7 +46,7 @@ const server = Bun.serve({
     const item = files.get(pathname);
     if (!item) return new Response("Not Found", { status: 404 });
     try {
-      if (development && (pathname === "/" || pathname === "/index.html"))
+      if (development && (pathname === "/" || pathname.endsWith(".html")))
         await build();
     } catch {
       return new Response("Build failed. Check server output.", {

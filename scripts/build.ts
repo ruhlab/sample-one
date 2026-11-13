@@ -89,9 +89,23 @@ const notices = (await text("src/THIRD_PARTY_NOTICES.md")).replaceAll(
 html = html.replace("</head>", `<!--\n${notices}\n-->\n</head>`);
 await mkdir(new URL("dist/", root), { recursive: true });
 await mkdir(new URL("dist/assets/", root), { recursive: true });
-await Bun.write(new URL("dist/index.html", root), html);
+await Bun.write(new URL("dist/sampler.html", root), html);
+const inlineStyle = `<style>${tailwind}\n${await text("src/styles/app.css")}</style>`;
+const home = (await text("src/home.html")).replace(
+  '<link rel="stylesheet" href="./styles/app.css" />',
+  inlineStyle,
+);
+const playerScript = await compiledScript("src/player.ts");
+const player = (await text("src/player.html"))
+  .replace('<link rel="stylesheet" href="./styles/app.css" />', inlineStyle)
+  .replace(
+    '<script type="module" src="./player.ts"></script>',
+    `<script>const s=document.createElement('script');s.src=URL.createObjectURL(new Blob([Uint8Array.from(atob('${playerScript}'),c=>c.charCodeAt(0))],{type:'text/javascript'}));document.body.appendChild(s);</script>`,
+  );
+await Bun.write(new URL("dist/index.html", root), home);
+await Bun.write(new URL("dist/player.html", root), player);
 await Bun.write(
   new URL("dist/assets/drum.wav", root),
   file("src/assets/drum.wav"),
 );
-console.log("Built dist/index.html and dist/assets/drum.wav");
+console.log("Built home, sampler, player and example audio");
