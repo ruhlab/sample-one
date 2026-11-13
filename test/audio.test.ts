@@ -123,10 +123,17 @@ test("project archives preserve audio buffers, shared references, and reject wro
   }
 });
 
-
 test("ZIP import distinguishes project manifests from sample archives", async () => {
-  const project = new Uint8Array(await buildZip([{ name: "project.json", data: new TextEncoder().encode("{}") }]).arrayBuffer());
-  const samples = new Uint8Array(await buildZip([{ name: "sample.wav", data: new Uint8Array([1]) }]).arrayBuffer());
+  const project = new Uint8Array(
+    await buildZip([
+      { name: "project.json", data: new TextEncoder().encode("{}") },
+    ]).arrayBuffer(),
+  );
+  const samples = new Uint8Array(
+    await buildZip([
+      { name: "sample.wav", data: new Uint8Array([1]) },
+    ]).arrayBuffer(),
+  );
   assert.equal(isProjectZip(project), true);
   assert.equal(isProjectZip(samples), false);
   assert.throws(() => isProjectZip(new Uint8Array([1, 2])), /ZIP/);

@@ -10,7 +10,11 @@
   <body>
     <main class="player-app">
       <header class="app-header player-workstation-header">
-        <a class="player-logo flex items-center gap-3" href="./index.html" aria-label="All projects">
+        <a
+          class="player-logo flex items-center gap-3"
+          href="./index.html"
+          aria-label="All projects"
+        >
           <div
             class="flex h-10 w-10 items-center justify-center rounded-xl border border-[#536840] bg-[#273426]"
             aria-hidden="true"
@@ -32,21 +36,14 @@
             <p class="eyebrow mt-1.5">Pad player</p>
           </div>
         </a>
-        <nav class="seg tabs" role="group" aria-label="Player mode"><button id="edit-mode" class="active header-mode-icon" type="button" title="Edit mode" aria-label="Edit mode" data-label="Edit mode" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4"/></svg></button><button id="play-mode" class="header-mode-icon" type="button" title="Play mode" aria-label="Play mode" data-label="Play mode" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 5 11 7-11 7z"/></svg></button></nav>
-        <span id="beat-indicator" class="beat-leds" role="img" aria-label="Beat indicator idle"><span class="beat-led" aria-hidden="true"></span><span class="beat-led" aria-hidden="true"></span><span class="beat-led" aria-hidden="true"></span><span class="beat-led" aria-hidden="true"></span></span>
-        <button id="metronome" class="btn btn-quiet btn-sm metronome-toggle" type="button" aria-label="Metronome" aria-pressed="false" title="Metronome" data-label="Metronome"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3h6l5 18H4L9 3ZM12 7v7m0 0 5-4M9 18h6"/></svg></button>
-        <button id="midi-learn" class="btn btn-quiet btn-sm project-icon-button" type="button" title="MIDI Learn" aria-label="MIDI Learn" data-label="MIDI Learn" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 5v8m4-8v8m4-8v8M3 14h18"/></svg></button>
-        <div class="player-header-actions">
-          <div class="play-controls">
-            
-<button id="record" class="btn btn-record btn-sm project-icon-button" type="button" title="Record WAV" aria-label="Record WAV" data-label="Record WAV" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="6" fill="currentColor" stroke="none"/></svg></button><button id="stop-all" class="btn btn-quiet btn-sm project-icon-button" type="button" title="Stop all" aria-label="Stop all" data-label="Stop all" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1" fill="currentColor" stroke="none"/></svg></button></div>
-        <div class="project-actions">
+        <nav class="seg tabs" role="group" aria-label="Player mode">
           <button
-            class="btn btn-quiet btn-sm project-icon-button"
-            id="project-import"
+            id="edit-mode"
+            class="active header-mode-icon"
             type="button"
-            title="Import project or samples"
-            aria-label="Import project or samples"
+            title="Edit mode"
+            aria-label="Edit mode"
+            data-label="Edit mode"
           >
             <svg
               viewBox="0 0 24 24"
@@ -54,15 +51,18 @@
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             >
-              <path d="M12 3v12m0 0 4-4m-4 4-4-4M4 16v4h16v-4" />
+              <path d="M4 20h4L19 9l-4-4L4 16v4ZM13.5 6.5l4 4" />
             </svg></button
           ><button
-            class="btn btn-quiet btn-sm project-icon-button"
-            id="project-export"
+            id="play-mode"
+            class="header-mode-icon"
             type="button"
-            title="Export project"
-            aria-label="Export project"
+            title="Play mode"
+            aria-label="Play mode"
+            data-label="Play mode"
           >
             <svg
               viewBox="0 0 24 24"
@@ -70,163 +70,636 @@
               fill="none"
               stroke="currentColor"
               stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
             >
-              <path d="M12 16V4m0 0 4 4m-4-4L8 8M4 16v4h16v-4" />
-            </svg></button
+              <path d="m8 5 11 7-11 7z" />
+            </svg>
+          </button>
+        </nav>
+        <span
+          id="beat-indicator"
+          class="beat-leds"
+          role="img"
+          aria-label="Beat indicator idle"
+          ><span class="beat-led" aria-hidden="true"></span
+          ><span class="beat-led" aria-hidden="true"></span
+          ><span class="beat-led" aria-hidden="true"></span
+          ><span class="beat-led" aria-hidden="true"></span
+        ></span>
+        <button
+          id="metronome"
+          class="btn btn-quiet btn-sm metronome-toggle"
+          type="button"
+          aria-label="Metronome"
+          aria-pressed="false"
+          title="Metronome"
+          data-label="Metronome"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
           >
-        </div>
+            <path d="M9 3h6l5 18H4L9 3ZM12 7v7m0 0 5-4M9 18h6" />
+          </svg>
+        </button>
+        <button
+          id="midi-learn"
+          class="btn btn-quiet btn-sm project-icon-button"
+          type="button"
+          title="MIDI Learn"
+          aria-label="MIDI Learn"
+          data-label="MIDI Learn"
+          aria-pressed="false"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="5" width="18" height="14" rx="2" />
+            <path d="M8 5v8m4-8v8m4-8v8M3 14h18" />
+          </svg>
+        </button>
+        <div class="player-header-actions">
+          <div class="play-controls">
+            <button
+              id="record"
+              class="btn btn-record btn-sm project-icon-button"
+              type="button"
+              title="Record WAV"
+              aria-label="Record WAV"
+              data-label="Record WAV"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle
+                  cx="12"
+                  cy="12"
+                  r="6"
+                  fill="currentColor"
+                  stroke="none"
+                />
+              </svg></button
+            ><button
+              id="stop-all"
+              class="btn btn-quiet btn-sm project-icon-button"
+              type="button"
+              title="Stop all"
+              aria-label="Stop all"
+              data-label="Stop all"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect
+                  x="6"
+                  y="6"
+                  width="12"
+                  height="12"
+                  rx="1"
+                  fill="currentColor"
+                  stroke="none"
+                />
+              </svg>
+            </button>
+          </div>
+          <div class="project-actions">
+            <button
+              class="btn btn-quiet btn-sm project-icon-button"
+              id="project-import"
+              type="button"
+              title="Import project or samples"
+              aria-label="Import project or samples"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path d="M12 3v12m0 0 4-4m-4 4-4-4M4 16v4h16v-4" />
+              </svg></button
+            ><button
+              class="btn btn-quiet btn-sm project-icon-button"
+              id="project-export"
+              type="button"
+              title="Export project"
+              aria-label="Export project"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path d="M12 16V4m0 0 4 4m-4-4L8 8M4 16v4h16v-4" />
+              </svg>
+            </button>
+          </div>
         </div>
       </header>
       <div class="player-layout">
         <section class="panel player-board">
           <div class="player-board-status">
             <div class="player-board-messages">
-              <p class="board-hint" id="board-hint" role="status" aria-live="polite">Select a pad to edit it · Drop audio directly onto a pad</p>
+              <p
+                class="board-hint"
+                id="board-hint"
+                role="status"
+                aria-live="polite"
+              >
+                Select a pad to edit it · Drop audio directly onto a pad
+              </p>
             </div>
-            <div class="board-bank-controls"><button id="bank-prev" class="btn btn-quiet btn-sm project-icon-button" type="button" title="Previous bank" aria-label="Previous bank" data-label="Previous bank" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14 6-6 6 6 6"/></svg></button><span id="bank-label" class="time" aria-label="Bank 1 of 1">1/1</span><button id="bank-add" class="btn btn-quiet btn-sm project-icon-button" type="button" title="Add bank" aria-label="Add bank" data-label="Add bank" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M12 7v10M7 12h10"/></svg></button><button id="bank-next" class="btn btn-quiet btn-sm project-icon-button" type="button" title="Next bank" aria-label="Next bank" data-label="Next bank" ><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m10 6 6 6-6 6"/></svg></button></div>
+            <div class="board-bank-controls">
+              <button
+                id="bank-prev"
+                class="btn btn-quiet btn-sm project-icon-button"
+                type="button"
+                title="Previous bank"
+                aria-label="Previous bank"
+                data-label="Previous bank"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m14 6-6 6 6 6" />
+                </svg></button
+              ><span id="bank-label" class="time" aria-label="Bank 1 of 1"
+                >1/1</span
+              ><button
+                id="bank-add"
+                class="btn btn-quiet btn-sm project-icon-button"
+                type="button"
+                title="Add bank"
+                aria-label="Add bank"
+                data-label="Add bank"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="3" />
+                  <path d="M12 7v10M7 12h10" />
+                </svg></button
+              ><button
+                id="bank-next"
+                class="btn btn-quiet btn-sm project-icon-button"
+                type="button"
+                title="Next bank"
+                aria-label="Next bank"
+                data-label="Next bank"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m10 6 6 6-6 6" />
+                </svg>
+              </button>
+            </div>
           </div>
           <div id="player-grid" class="pad-grid"></div>
         </section>
         <aside class="panel pad-editor" id="editor">
-          <div id="general-options"><details class="settings-section"  open><summary>Playback</summary><div class="settings-section-body"><label
-              >Master volume <output id="master-volume-value"></output
-              ><input
-                id="master-volume"
-                type="range"
-                min="0"
-                max="2"
-                step="0.01"
-                value="1"
-            /></label><label>BPM
-              <span class="bpm-controls">
-                <input id="bpm-slider" type="range" min="40" max="240" step="1" value="120" aria-label="BPM slider" />
-                <input id="bpm" type="number" class="field" min="40" max="240" step="1" value="120" aria-label="BPM" />
-              </span>
-            </label><label
-              >Metronome volume <output id="metronome-volume-value"></output
-              ><input
-                id="metronome-volume"
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value="1"
-            /></label></div></details><details class="settings-section" ><summary>Recording</summary><div class="settings-section-body"><label class="general-toggle"
-              ><input id="metronome-on-record" type="checkbox" /> Metronome on
-              record</label
-            ><label class="general-toggle"
-              ><input id="countdown" type="checkbox" /> Count down before
-              recording</label
-            ></div></details><details class="settings-section"><summary>MIDI controls</summary>
+          <div id="general-options">
+            <details class="settings-section" open>
+              <summary>Playback</summary>
+              <div class="settings-section-body">
+                <label
+                  >Master volume <output id="master-volume-value"></output
+                  ><input
+                    id="master-volume"
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.01"
+                    value="1" /></label
+                ><label
+                  >BPM
+                  <span class="bpm-controls">
+                    <input
+                      id="bpm-slider"
+                      type="range"
+                      min="40"
+                      max="240"
+                      step="1"
+                      value="120"
+                      aria-label="BPM slider"
+                    />
+                    <input
+                      id="bpm"
+                      type="number"
+                      class="field"
+                      min="40"
+                      max="240"
+                      step="1"
+                      value="120"
+                      aria-label="BPM"
+                    />
+                  </span> </label
+                ><label
+                  >Metronome volume <output id="metronome-volume-value"></output
+                  ><input
+                    id="metronome-volume"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="1"
+                /></label>
+              </div>
+            </details>
+            <details class="settings-section">
+              <summary>Recording</summary>
+              <div class="settings-section-body">
+                <label class="general-toggle"
+                  ><input id="metronome-on-record" type="checkbox" /> Metronome
+                  on record</label
+                ><label class="general-toggle"
+                  ><input id="countdown" type="checkbox" /> Count down before
+                  recording</label
+                >
+              </div>
+            </details>
+            <details class="settings-section">
+              <summary>MIDI controls</summary>
               <div id="midi-bank-context" class="midi-bank-context"></div>
-              <div class="midi-table-scroll"><div class="midi-table-heading"><span>Control</span><span>Type</span><span>Ch</span><span>Value</span><span>Input</span><span>CC type</span><span></span></div>
-              <div id="midi-mapping-list" class="midi-mapping-list"></div></div>
-              <button class="btn btn-quiet btn-sm midi-table-clear" id="midi-table-clear-all" type="button">Clear all MIDI mappings</button>
-            </details><details class="settings-section" data-edit-only><summary>Groups</summary><div class="settings-section-body group-mode-list"><label>Group 1<select id="group-mode-1" class="field"><option value="one">Play only one</option><option value="all">Play all</option></select></label><label>Group 2<select id="group-mode-2" class="field"><option value="one">Play only one</option><option value="all">Play all</option></select></label><label>Group 3<select id="group-mode-3" class="field"><option value="one">Play only one</option><option value="all">Play all</option></select></label><label>Group 4<select id="group-mode-4" class="field"><option value="one">Play only one</option><option value="all">Play all</option></select></label><label>Group 5<select id="group-mode-5" class="field"><option value="one">Play only one</option><option value="all">Play all</option></select></label><label>Group 6<select id="group-mode-6" class="field"><option value="one">Play only one</option><option value="all">Play all</option></select></label><label>Group 7<select id="group-mode-7" class="field"><option value="one">Play only one</option><option value="all">Play all</option></select></label><label>Group 8<select id="group-mode-8" class="field"><option value="one">Play only one</option><option value="all">Play all</option></select></label></div></details><details class="settings-section" data-edit-only><summary>New pad defaults</summary><div class="settings-section-body"><label>Default trigger interval (beats)
-              <select id="quantize" class="field"><option value="0">0 (immediate)</option><option value="0.0625">1/16</option><option value="0.125">1/8</option><option value="0.25">1/4</option><option value="0.5">1/2</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="8">8</option><option value="16">16</option></select>
-            </label><label>Default trigger delay (beats)<select id="default-trigger-delay" class="field"><option value="0">0 (immediate)</option><option value="0.0625">1/16</option><option value="0.125">1/8</option><option value="0.25">1/4</option><option value="0.5">1/2</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="8">8</option><option value="16">16</option></select></label><label
-              >Default playback mode<select id="default-mode" class="field">
-                <option value="one-shot">One-shot</option>
-                <option value="gate">Gate</option>
-                <option value="loop">Loop</option>
-                <option value="loop-cut">Loop cut</option>
-              </select></label
-            ></div></details><details class="settings-section" data-edit-only><summary>MIDI</summary><div class="settings-section-body"><label class="general-toggle"
-              ><input id="midi-individual" type="checkbox" /> MIDI Learn
-              individual bank</label
-            ><label class="general-toggle"
-              ><input id="midi-preserve" type="checkbox" /> Preserve MIDI Learn
-              in this browser</label
-            ><button class="btn btn-quiet btn-sm" id="midi-clear-all" type="button">Clear MIDI Learn</button></div></details><details class="settings-section" data-edit-only><summary>Logging</summary><div class="settings-section-body"><label class="general-toggle"
-              ><input id="general-log" type="checkbox" /> General Log</label
-            ><label class="general-toggle"
-              ><input id="midi-log" type="checkbox" /> MIDI Log</label
-            ></div></details></div>
-          <div id="editor-controls" hidden>            <div class="pad-identity">
-              <button id="pad-name-display" class="pad-name-display" type="button" title="Rename pad" aria-label="Rename pad"></button>
-              <input id="pad-name" class="field" maxlength="80" aria-label="Pad name" hidden />
-              <button class="btn btn-quiet btn-sm pad-audio-button" id="load-pad" type="button" title="Load audio" aria-label="Load audio">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 16V4m0 0L8 8m4-4 4 4M4 16v4h16v-4"/></svg>
+              <div class="midi-table-scroll">
+                <div class="midi-table-heading">
+                  <span>Control</span><span>Type</span><span>Ch</span
+                  ><span>Value</span><span>Input</span><span>CC type</span
+                  ><span></span>
+                </div>
+                <div id="midi-mapping-list" class="midi-mapping-list"></div>
+              </div>
+              <button
+                class="btn btn-quiet btn-sm midi-table-clear"
+                id="midi-table-clear-all"
+                type="button"
+              >
+                Clear all MIDI mappings
               </button>
-              <button class="btn btn-quiet btn-sm pad-audio-button" id="remove-pad" type="button" title="Remove audio" aria-label="Remove audio">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7m4 3v7m4-7v7"/></svg>
+            </details>
+            <details class="settings-section" data-edit-only>
+              <summary>Groups</summary>
+              <div class="settings-section-body group-mode-list">
+                <label
+                  >Group 1<select id="group-mode-1" class="field">
+                    <option value="one">Play only one</option>
+                    <option value="all">Play all</option>
+                  </select></label
+                ><label
+                  >Group 2<select id="group-mode-2" class="field">
+                    <option value="one">Play only one</option>
+                    <option value="all">Play all</option>
+                  </select></label
+                ><label
+                  >Group 3<select id="group-mode-3" class="field">
+                    <option value="one">Play only one</option>
+                    <option value="all">Play all</option>
+                  </select></label
+                ><label
+                  >Group 4<select id="group-mode-4" class="field">
+                    <option value="one">Play only one</option>
+                    <option value="all">Play all</option>
+                  </select></label
+                ><label
+                  >Group 5<select id="group-mode-5" class="field">
+                    <option value="one">Play only one</option>
+                    <option value="all">Play all</option>
+                  </select></label
+                ><label
+                  >Group 6<select id="group-mode-6" class="field">
+                    <option value="one">Play only one</option>
+                    <option value="all">Play all</option>
+                  </select></label
+                ><label
+                  >Group 7<select id="group-mode-7" class="field">
+                    <option value="one">Play only one</option>
+                    <option value="all">Play all</option>
+                  </select></label
+                ><label
+                  >Group 8<select id="group-mode-8" class="field">
+                    <option value="one">Play only one</option>
+                    <option value="all">Play all</option>
+                  </select></label
+                >
+              </div>
+            </details>
+            <details class="settings-section" data-edit-only>
+              <summary>New pad defaults</summary>
+              <div class="settings-section-body">
+                <label
+                  >Default trigger interval (beats)
+                  <select id="quantize" class="field">
+                    <option value="0">0 (immediate)</option>
+                    <option value="0.0625">1/16</option>
+                    <option value="0.125">1/8</option>
+                    <option value="0.25">1/4</option>
+                    <option value="0.5">1/2</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="16">16</option>
+                  </select> </label
+                ><label
+                  >Default trigger delay (beats)<select
+                    id="default-trigger-delay"
+                    class="field"
+                  >
+                    <option value="0">0 (immediate)</option>
+                    <option value="0.0625">1/16</option>
+                    <option value="0.125">1/8</option>
+                    <option value="0.25">1/4</option>
+                    <option value="0.5">1/2</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="16">16</option>
+                  </select></label
+                ><label
+                  >Default playback mode<select id="default-mode" class="field">
+                    <option value="one-shot">One-shot</option>
+                    <option value="gate">Gate</option>
+                    <option value="loop">Loop</option>
+                    <option value="loop-cut">Loop cut</option>
+                  </select></label
+                >
+              </div>
+            </details>
+            <details class="settings-section" data-edit-only>
+              <summary>MIDI</summary>
+              <div class="settings-section-body">
+                <label class="general-toggle"
+                  ><input id="midi-individual" type="checkbox" /> MIDI Learn
+                  individual bank</label
+                ><label class="general-toggle"
+                  ><input id="midi-preserve" type="checkbox" /> Preserve MIDI
+                  Learn in this browser</label
+                ><button
+                  class="btn btn-quiet btn-sm"
+                  id="midi-clear-all"
+                  type="button"
+                >
+                  Clear MIDI Learn
+                </button>
+              </div>
+            </details>
+            <details class="settings-section" data-edit-only>
+              <summary>Logging</summary>
+              <div class="settings-section-body">
+                <label class="general-toggle"
+                  ><input id="general-log" type="checkbox" /> General Log</label
+                ><label class="general-toggle"
+                  ><input id="midi-log" type="checkbox" /> MIDI Log</label
+                >
+              </div>
+            </details>
+          </div>
+          <div id="editor-controls" hidden>
+            <div class="pad-identity">
+              <button
+                id="pad-name-display"
+                class="pad-name-display"
+                type="button"
+                title="Rename pad"
+                aria-label="Rename pad"
+              ></button>
+              <input
+                id="pad-name"
+                class="field"
+                maxlength="80"
+                aria-label="Pad name"
+                hidden
+              />
+              <button
+                class="btn btn-quiet btn-sm pad-audio-button"
+                id="load-pad"
+                type="button"
+                title="Load audio"
+                aria-label="Load audio"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  aria-hidden="true"
+                >
+                  <path d="M12 16V4m0 0L8 8m4-4 4 4M4 16v4h16v-4" />
+                </svg>
+              </button>
+              <button
+                class="btn btn-quiet btn-sm pad-audio-button"
+                id="remove-pad"
+                type="button"
+                title="Remove audio"
+                aria-label="Remove audio"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  aria-hidden="true"
+                >
+                  <path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7m4 3v7m4-7v7" />
+                </svg>
               </button>
             </div>
-<details class="settings-section"  open><summary>Playback</summary><div class="settings-section-body"><label
-              >Playback mode<select id="pad-mode" class="field">
-                <option value="one-shot">One-shot</option>
-                <option value="gate">Gate</option>
-                <option value="loop">Loop</option>
-                <option value="loop-cut">Loop cut</option>
-              </select></label
-            ><label
-              >Group<select id="pad-group" class="field">
-                <option value="">None</option>
-                <option value="1">Group 1</option><option value="2">Group 2</option>
-                <option value="3">Group 3</option><option value="4">Group 4</option>
-                <option value="5">Group 5</option><option value="6">Group 6</option>
-                <option value="7">Group 7</option><option value="8">Group 8</option>
-              </select></label><label
-              >Volume <output id="volume-value"></output
-              ><input
-                id="pad-volume"
-                type="range"
-                min="0"
-                max="2"
-                step="0.01"
-                value="0.86" /></label
-            ><div id="loop-cut-settings" hidden><label>Loop length (beats)<select id="pad-loop-beats" class="field">
-                <option value="16">16</option><option value="8">8</option>
-                <option value="4">4</option><option value="2">2</option>
-                <option value="1">1</option><option value="0">Auto</option>
-                <option value="0.5">1/2</option><option value="0.25">1/4</option>
-                <option value="0.125">1/8</option><option value="0.0625">1/16</option>
-                <option value="32" hidden>32</option>
-              </select></label></div></div></details><details class="settings-section" ><summary>Trigger</summary><div class="settings-section-body"><label>Trigger interval (beats)
-              <select id="pad-quantize" class="field"><option value="0">0 (immediate)</option><option value="0.0625">1/16</option><option value="0.125">1/8</option><option value="0.25">1/4</option><option value="0.5">1/2</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="8">8</option><option value="16">16</option></select>
-            </label><label>Trigger delay (beats)<select id="pad-trigger-delay" class="field"><option value="0">0 (immediate)</option><option value="0.0625">1/16</option><option value="0.125">1/8</option><option value="0.25">1/4</option><option value="0.5">1/2</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="8">8</option><option value="16">16</option></select></label></div></details><details class="settings-section" ><summary>Sound</summary><div class="settings-section-body"><label
-              >Pan <output id="pan-value"></output
-              ><input
-                id="pad-pan"
-                type="range"
-                min="-1"
-                max="1"
-                step="0.01"
-                value="0" /></label
-            ><label
-              >Pitch <output id="pitch-value"></output
-              ><input
-                id="pad-pitch"
-                type="range"
-                min="-12"
-                max="12"
-                step="1"
-                value="0" /></label
-            ><label
-              >Fade in <output id="fadein-value"></output
-              ><input
-                id="pad-fadein"
-                type="range"
-                min="0"
-                max="2"
-                step="0.01"
-                value="0" /></label
-            ><label
-              >Fade out <output id="fadeout-value"></output
-              ><input
-                id="pad-fadeout"
-                type="range"
-                min="0"
-                max="2"
-                step="0.01"
-                value="0"
-            /></label></div></details><details class="settings-section"><summary>MIDI</summary><div class="settings-section-body">            <div class="midi-section">
-              <span class="midi-assignment-label">MIDI assignment</span>
-              <p id="midi-label">No note assigned</p>
-              <div class="editor-buttons">
-                <button class="btn" id="midi-clear">Clear</button>
+            <details class="settings-section" open>
+              <summary>Playback</summary>
+              <div class="settings-section-body">
+                <label
+                  >Playback mode<select id="pad-mode" class="field">
+                    <option value="one-shot">One-shot</option>
+                    <option value="gate">Gate</option>
+                    <option value="loop">Loop</option>
+                    <option value="loop-cut">Loop cut</option>
+                  </select></label
+                ><label
+                  >Group<select id="pad-group" class="field">
+                    <option value="">None</option>
+                    <option value="1">Group 1</option>
+                    <option value="2">Group 2</option>
+                    <option value="3">Group 3</option>
+                    <option value="4">Group 4</option>
+                    <option value="5">Group 5</option>
+                    <option value="6">Group 6</option>
+                    <option value="7">Group 7</option>
+                    <option value="8">Group 8</option>
+                  </select></label
+                ><label
+                  >Volume <output id="volume-value"></output
+                  ><input
+                    id="pad-volume"
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.01"
+                    value="0.86"
+                /></label>
+                <div id="loop-cut-settings" hidden>
+                  <label
+                    >Loop length (beats)<select
+                      id="pad-loop-beats"
+                      class="field"
+                    >
+                      <option value="16">16</option>
+                      <option value="8">8</option>
+                      <option value="4">4</option>
+                      <option value="2">2</option>
+                      <option value="1">1</option>
+                      <option value="0">Auto</option>
+                      <option value="0.5">1/2</option>
+                      <option value="0.25">1/4</option>
+                      <option value="0.125">1/8</option>
+                      <option value="0.0625">1/16</option>
+                      <option value="32" hidden>32</option>
+                    </select></label
+                  >
+                </div>
               </div>
-            </div></div></details></div>
+            </details>
+            <details class="settings-section">
+              <summary>Trigger</summary>
+              <div class="settings-section-body">
+                <label
+                  >Trigger interval (beats)
+                  <select id="pad-quantize" class="field">
+                    <option value="0">0 (immediate)</option>
+                    <option value="0.0625">1/16</option>
+                    <option value="0.125">1/8</option>
+                    <option value="0.25">1/4</option>
+                    <option value="0.5">1/2</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="16">16</option>
+                  </select> </label
+                ><label
+                  >Trigger delay (beats)<select
+                    id="pad-trigger-delay"
+                    class="field"
+                  >
+                    <option value="0">0 (immediate)</option>
+                    <option value="0.0625">1/16</option>
+                    <option value="0.125">1/8</option>
+                    <option value="0.25">1/4</option>
+                    <option value="0.5">1/2</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="8">8</option>
+                    <option value="16">16</option>
+                  </select></label
+                >
+              </div>
+            </details>
+            <details class="settings-section">
+              <summary>Sound</summary>
+              <div class="settings-section-body">
+                <label
+                  >Pan <output id="pan-value"></output
+                  ><input
+                    id="pad-pan"
+                    type="range"
+                    min="-1"
+                    max="1"
+                    step="0.01"
+                    value="0" /></label
+                ><label
+                  >Pitch <output id="pitch-value"></output
+                  ><input
+                    id="pad-pitch"
+                    type="range"
+                    min="-12"
+                    max="12"
+                    step="1"
+                    value="0" /></label
+                ><label
+                  >Fade in <output id="fadein-value"></output
+                  ><input
+                    id="pad-fadein"
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.01"
+                    value="0" /></label
+                ><label
+                  >Fade out <output id="fadeout-value"></output
+                  ><input
+                    id="pad-fadeout"
+                    type="range"
+                    min="0"
+                    max="2"
+                    step="0.01"
+                    value="0"
+                /></label>
+              </div>
+            </details>
+            <details class="settings-section">
+              <summary>MIDI</summary>
+              <div class="settings-section-body">
+                <div class="midi-section">
+                  <span class="midi-assignment-label">MIDI assignment</span>
+                  <p id="midi-label">No note assigned</p>
+                  <div class="editor-buttons">
+                    <button class="btn" id="midi-clear">Clear</button>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
         </aside>
       </div>
       <footer

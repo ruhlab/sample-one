@@ -1,5 +1,10 @@
 import { expect, test } from "bun:test";
-import { shouldShowBeat, shouldResetForLoop, displayBeatIndex, shouldStopIdleClock } from "../src/features/beat-display.ts";
+import {
+  shouldShowBeat,
+  shouldResetForLoop,
+  displayBeatIndex,
+  shouldStopIdleClock,
+} from "../src/features/beat-display.ts";
 
 test("beat display follows loops, metronome and recording", () => {
   expect(shouldShowBeat(true, false, false, false)).toBe(false);
@@ -17,7 +22,9 @@ test("first loop resets an idle clock but not a running loop or metronome", () =
 });
 
 test("first visible beat uses the first LED even after a delayed start", () => {
-  expect([3, 4, 5, 6, 7].map((beat) => displayBeatIndex(beat, 3))).toEqual([0, 1, 2, 3, 0]);
+  expect([3, 4, 5, 6, 7].map((beat) => displayBeatIndex(beat, 3))).toEqual([
+    0, 1, 2, 3, 0,
+  ]);
 });
 
 test("the idle clock stops, but pending loops, metronome, and recording keep it running", () => {

@@ -1,9 +1,25 @@
-import { shouldShowBeat, shouldResetForLoop, displayBeatIndex, shouldStopIdleClock } from "./features/beat-display.ts";
+import {
+  shouldShowBeat,
+  shouldResetForLoop,
+  displayBeatIndex,
+  shouldStopIdleClock,
+} from "./features/beat-display.ts";
 import { warmPlayerAudio } from "./features/player-audio-warmup.ts";
 import { padActivity, loopDisplayDuration } from "./features/pad-activity.ts";
-import { groupTargets, nextGroupState, groupSurvivor, groupTogglePlan } from "./features/player-groups.ts";
+import {
+  groupTargets,
+  nextGroupState,
+  groupSurvivor,
+  groupTogglePlan,
+} from "./features/player-groups.ts";
 import { loopCutEnd, loopCutOffset } from "./features/loop-cut.ts";
-import { beatInterval, triggerBeat, nextBeatAtTempo, queueWakeBeat, rebaseBeat } from "./features/beat-interval.ts";
+import {
+  beatInterval,
+  triggerBeat,
+  nextBeatAtTempo,
+  queueWakeBeat,
+  rebaseBeat,
+} from "./features/beat-interval.ts";
 import { setupSliderReset } from "./features/slider-reset.ts";
 import { encodeWav } from "./audio/wav.ts";
 import { readSampleZip, isProjectZip } from "./audio/read-zip.ts";
@@ -126,9 +142,26 @@ const midiControlIds = [
   "bpm",
   "metronome",
 ] as const;
-const midiButtonIds = ["record", "stop-all", "bank-prev", "bank-next", "metronome"] as const;
-function validButtonTypes(value: unknown): value is Record<string, "momentary" | "toggle"> {
-  return !!value && typeof value === "object" && !Array.isArray(value) && Object.entries(value).every(([id, type]) => midiButtonIds.includes(id as any) && (type === "momentary" || type === "toggle"));
+const midiButtonIds = [
+  "record",
+  "stop-all",
+  "bank-prev",
+  "bank-next",
+  "metronome",
+] as const;
+function validButtonTypes(
+  value: unknown,
+): value is Record<string, "momentary" | "toggle"> {
+  return (
+    !!value &&
+    typeof value === "object" &&
+    !Array.isArray(value) &&
+    Object.entries(value).every(
+      ([id, type]) =>
+        midiButtonIds.includes(id as any) &&
+        (type === "momentary" || type === "toggle"),
+    )
+  );
 }
 function validControlMidi(value: any): boolean {
   return (
@@ -162,11 +195,16 @@ try {
     if (validControlMidi(saved.controls)) controlMidi = saved.controls;
     if (["momentary", "toggle"].includes(saved.buttonType))
       midiButtonType = saved.buttonType;
-    if (validButtonTypes(saved.buttonTypes)) midiButtonTypes = { ...saved.buttonTypes };
+    if (validButtonTypes(saved.buttonTypes))
+      midiButtonTypes = { ...saved.buttonTypes };
   }
 } catch {}
 function validGroupModes(value: unknown): value is ("one" | "all")[] {
-  return Array.isArray(value) && value.length === 8 && value.every((mode) => mode === "one" || mode === "all");
+  return (
+    Array.isArray(value) &&
+    value.length === 8 &&
+    value.every((mode) => mode === "one" || mode === "all")
+  );
 }
 function exclusiveGroup(group: string | undefined): boolean {
   return !!group && groupModes[Number(group) - 1] !== "all";
@@ -193,10 +231,15 @@ try {
       defaultMode = saved.defaultMode;
     if (["momentary", "toggle"].includes(saved.midiButtonType))
       midiButtonType = saved.midiButtonType;
-    if (validButtonTypes(saved.midiButtonTypes)) midiButtonTypes = { ...saved.midiButtonTypes };
-    defaultTriggerBeats = beatInterval(saved.defaultTriggerBeats, saved.quantize === true ? 1 : 0);
+    if (validButtonTypes(saved.midiButtonTypes))
+      midiButtonTypes = { ...saved.midiButtonTypes };
+    defaultTriggerBeats = beatInterval(
+      saved.defaultTriggerBeats,
+      saved.quantize === true ? 1 : 0,
+    );
     defaultTriggerDelay = beatInterval(saved.defaultTriggerDelay);
-    if (validGroupModes(saved.groupModes)) groupModes = saved.groupModes.slice();
+    if (validGroupModes(saved.groupModes))
+      groupModes = saved.groupModes.slice();
     if (typeof saved.metronomeEnabled === "boolean")
       metronomeEnabled = saved.metronomeEnabled;
     if (typeof saved.metronomeOnRecord === "boolean")
@@ -280,13 +323,15 @@ function logMidi(event: string, details?: unknown) {
   if (midiLog) console.log("[SAMPLE/ONE MIDI]", event, details ?? "");
 }
 function renderStatusText() {
-  $("board-hint").textContent = statusMessage ?? (learning
-    ? learnedNote
-      ? `${learnedNote.kind === "cc" ? "CC" : "Note"} ${learnedNote.note} · Channel ${learnedNote.channel + 1}: select a pad or control`
-      : "Play a MIDI note or move a controller, then select a pad or control"
-    : mode === "edit"
-      ? "Select a pad to edit it · Press it again to play · Drop audio onto a pad"
-      : "Play pads or use a MIDI controller");
+  $("board-hint").textContent =
+    statusMessage ??
+    (learning
+      ? learnedNote
+        ? `${learnedNote.kind === "cc" ? "CC" : "Note"} ${learnedNote.note} · Channel ${learnedNote.channel + 1}: select a pad or control`
+        : "Play a MIDI note or move a controller, then select a pad or control"
+      : mode === "edit"
+        ? "Select a pad to edit it · Press it again to play · Drop audio onto a pad"
+        : "Play pads or use a MIDI controller");
 }
 function status(message: string) {
   logGeneral("Status", message);
@@ -352,7 +397,10 @@ function stopPad(index: number, fade = false) {
     return;
   }
   voices.delete(index);
-  const fadeTime = fade && (!context || voice.startedAt <= context.currentTime) ? pads[index]?.fadeout || 0 : 0;
+  const fadeTime =
+    fade && (!context || voice.startedAt <= context.currentTime)
+      ? pads[index]?.fadeout || 0
+      : 0;
   if (fadeTime && context) {
     const now = context.currentTime;
     voice.gain.gain.cancelAndHoldAtTime(now);
@@ -387,24 +435,45 @@ let lightFrame: number | null = null;
 function updateLights() {
   stopBeatClockIfIdle();
   resetBeatIfIdle();
-  if (firstDisplayBeat === null && beatDisplayActive() && !metronomeEnabled && !recording && !counting) {
+  if (
+    firstDisplayBeat === null &&
+    beatDisplayActive() &&
+    !metronomeEnabled &&
+    !recording &&
+    !counting
+  ) {
     firstDisplayBeat = Math.max(0, Math.floor(clockPosition() + 0.01));
     showBeat(0);
   }
-  document.querySelectorAll<HTMLButtonElement>("[data-pad]").forEach((button) => {
-    const index = Number(button.dataset.pad);
-    const voice = voices.get(index), pad = pads[index];
-    const now = context?.currentTime ?? 0;
-    const offset = voice ? voiceOffset(voice, now) : 0;
-    const loopEnd = voice?.source.loop ? voice.source.loopEnd || voice.source.buffer!.duration : 0;
-    const state = padActivity(voice && pad ? {
-      started: context?.state === "running" && voice.startedAt <= now,
-      offset,
-      audioDuration: loopDisplayDuration(pad.buffer.duration, loopEnd, voice.source.playbackRate.value),
-    } : null, queued.get(index)?.action === "start", pending.has(index));
-    button.classList.toggle("active", state === "playing");
-    button.classList.toggle("waiting", state === "waiting");
-  });
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-pad]")
+    .forEach((button) => {
+      const index = Number(button.dataset.pad);
+      const voice = voices.get(index),
+        pad = pads[index];
+      const now = context?.currentTime ?? 0;
+      const offset = voice ? voiceOffset(voice, now) : 0;
+      const loopEnd = voice?.source.loop
+        ? voice.source.loopEnd || voice.source.buffer!.duration
+        : 0;
+      const state = padActivity(
+        voice && pad
+          ? {
+              started: context?.state === "running" && voice.startedAt <= now,
+              offset,
+              audioDuration: loopDisplayDuration(
+                pad.buffer.duration,
+                loopEnd,
+                voice.source.playbackRate.value,
+              ),
+            }
+          : null,
+        queued.get(index)?.action === "start",
+        pending.has(index),
+      );
+      button.classList.toggle("active", state === "playing");
+      button.classList.toggle("waiting", state === "waiting");
+    });
   if (voices.size && lightFrame === null) {
     lightFrame = requestAnimationFrame(() => {
       lightFrame = null;
@@ -412,42 +481,80 @@ function updateLights() {
     });
   }
 }
-const queued = new Map<number, { action: "start" | "stop"; beat: number; origin: number }>();
+const queued = new Map<
+  number,
+  { action: "start" | "stop"; beat: number; origin: number }
+>();
 let queueTimer: ReturnType<typeof setTimeout> | null = null;
-function clockPosition() { return clockRunning ? beatNumber + (performance.now() - nextBeat) / (60000 / bpm) : 0; }
+function clockPosition() {
+  return clockRunning
+    ? beatNumber + (performance.now() - nextBeat) / (60000 / bpm)
+    : 0;
+}
 function scheduleQueue() {
   if (queueTimer) clearTimeout(queueTimer);
   queueTimer = null;
   if (!queued.size) return;
   const now = clockPosition();
-  const wakeBeat = (index: number, entry: { action: "start" | "stop"; beat: number }) =>
-    queueWakeBeat(entry.beat, bpm, entry.action === "start" && !!pads[index]?.group && !exclusiveGroup(pads[index]?.group));
-  const earliest = Math.min(...[...queued].map(([index, entry]) => wakeBeat(index, entry)));
-  queueTimer = setTimeout(() => {
-    queueTimer = null;
-    const position = clockPosition();
-    for (const [index, entry] of [...queued]) {
-      if (wakeBeat(index, entry) > position + 0.0001) continue;
-      queued.delete(index);
-      if (entry.action === "stop") stopPad(index, true);
-      else void playPad(index, entry.beat, entry.origin);
-    }
-    updateLights();
-    scheduleQueue();
-  }, Math.max(0, (earliest - now) * 60000 / bpm));
+  const wakeBeat = (
+    index: number,
+    entry: { action: "start" | "stop"; beat: number },
+  ) =>
+    queueWakeBeat(
+      entry.beat,
+      bpm,
+      entry.action === "start" &&
+        !!pads[index]?.group &&
+        !exclusiveGroup(pads[index]?.group),
+    );
+  const earliest = Math.min(
+    ...[...queued].map(([index, entry]) => wakeBeat(index, entry)),
+  );
+  queueTimer = setTimeout(
+    () => {
+      queueTimer = null;
+      const position = clockPosition();
+      for (const [index, entry] of [...queued]) {
+        if (wakeBeat(index, entry) > position + 0.0001) continue;
+        queued.delete(index);
+        if (entry.action === "stop") stopPad(index, true);
+        else void playPad(index, entry.beat, entry.origin);
+      }
+      updateLights();
+      scheduleQueue();
+    },
+    Math.max(0, ((earliest - now) * 60000) / bpm),
+  );
 }
-function queueAction(index: number, action: "start" | "stop", pad: Pad, position?: number) {
+function queueAction(
+  index: number,
+  action: "start" | "stop",
+  pad: Pad,
+  position?: number,
+) {
   if (!clockRunning) resetBeatClock(40);
   const origin = position ?? clockPosition();
-  queued.set(index, { action, beat: triggerBeat(origin, pad.triggerBeats, pad.triggerDelay ?? 0), origin });
+  queued.set(index, {
+    action,
+    beat: triggerBeat(origin, pad.triggerBeats, pad.triggerDelay ?? 0),
+    origin,
+  });
   scheduleQueue();
 }
 function resetClockForLoopStart(targets: number[]) {
-  const startingLoop = targets.some((index) => ["loop", "loop-cut"].includes(pads[index]?.mode ?? ""));
-  const loopRunning = !!context && context.state === "running" &&
-    [...voices.values()].some((voice) => voice.source.loop && voice.startedAt <= context!.currentTime);
-  const metronomeRunning = metronomeEnabled || (recording && metronomeOnRecord) || counting;
-  if (shouldResetForLoop(startingLoop, loopRunning, metronomeRunning)) resetBeatClock(40);
+  const startingLoop = targets.some((index) =>
+    ["loop", "loop-cut"].includes(pads[index]?.mode ?? ""),
+  );
+  const loopRunning =
+    !!context &&
+    context.state === "running" &&
+    [...voices.values()].some(
+      (voice) => voice.source.loop && voice.startedAt <= context!.currentTime,
+    );
+  const metronomeRunning =
+    metronomeEnabled || (recording && metronomeOnRecord) || counting;
+  if (shouldResetForLoop(startingLoop, loopRunning, metronomeRunning))
+    resetBeatClock(40);
 }
 function trigger(index: number) {
   const group = pads[index]?.group;
@@ -456,12 +563,22 @@ function trigger(index: number) {
   heldPadGroups.set(index, targets);
   if (!playAll || !group) {
     heldGroupToggles.delete(index);
-    if (!voices.has(index) && !pending.has(index) && queued.get(index)?.action !== "start") resetClockForLoopStart(targets);
+    if (
+      !voices.has(index) &&
+      !pending.has(index) &&
+      queued.get(index)?.action !== "start"
+    )
+      resetClockForLoopStart(targets);
     void triggerPad(index);
     return;
   }
   heldGroupToggles.add(index);
-  const anyActive = targets.some((target) => voices.has(target) || pending.has(target) || queued.get(target)?.action === "start");
+  const anyActive = targets.some(
+    (target) =>
+      voices.has(target) ||
+      pending.has(target) ||
+      queued.get(target)?.action === "start",
+  );
   const desired = groupDesired.get(group);
   const turnOn = nextGroupState(desired, anyActive);
   groupDesired.set(group, turnOn);
@@ -469,7 +586,9 @@ function trigger(index: number) {
   const position = clockPosition();
   const members = targets.map((index) => ({
     index,
-    playing: voices.has(index) && (!context || voices.get(index)!.startedAt <= context.currentTime),
+    playing:
+      voices.has(index) &&
+      (!context || voices.get(index)!.startedAt <= context.currentTime),
   }));
   clockHold++;
   for (const { index: target, action } of groupTogglePlan(turnOn, members)) {
@@ -491,13 +610,29 @@ function trigger(index: number) {
   scheduleQueue();
   updateLights();
 }
-async function triggerPad(index: number, position?: number, forceStart = false) {
+async function triggerPad(
+  index: number,
+  position?: number,
+  forceStart = false,
+) {
   const pad = pads[index];
   if (!pad) return;
   const origin = position ?? clockPosition();
   if (!pad.triggerBeats && !pad.triggerDelay) {
-    if (!forceStart && (pad.mode === "loop" || pad.mode === "loop-cut") && (voices.has(index) || pending.has(index))) stopPad(index, true);
-    else void playPad(index, forceStart && position !== undefined ? position + 0.01 * bpm / 60 : undefined, origin);
+    if (
+      !forceStart &&
+      (pad.mode === "loop" || pad.mode === "loop-cut") &&
+      (voices.has(index) || pending.has(index))
+    )
+      stopPad(index, true);
+    else
+      void playPad(
+        index,
+        forceStart && position !== undefined
+          ? position + (0.01 * bpm) / 60
+          : undefined,
+        origin,
+      );
     return;
   }
   const token = {};
@@ -506,12 +641,27 @@ async function triggerPad(index: number, position?: number, forceStart = false) 
     await audio();
     if (pending.get(index) !== token || pads[index] !== pad) return;
     pending.delete(index);
-    const action = !forceStart && (pad.mode === "loop" || pad.mode === "loop-cut") && (voices.has(index) || queued.get(index)?.action === "start") ? "stop" : "start";
-    if (action === "stop" && queued.get(index)?.action === "start" && !voices.has(index)) queued.delete(index);
+    const action =
+      !forceStart &&
+      (pad.mode === "loop" || pad.mode === "loop-cut") &&
+      (voices.has(index) || queued.get(index)?.action === "start")
+        ? "stop"
+        : "start";
+    if (
+      action === "stop" &&
+      queued.get(index)?.action === "start" &&
+      !voices.has(index)
+    )
+      queued.delete(index);
     else {
       if (action === "start" && exclusiveGroup(pad.group)) {
         for (const [otherIndex, otherAction] of queued) {
-          if (otherIndex !== index && otherAction.action === "start" && pads[otherIndex]?.group === pad.group) queued.delete(otherIndex);
+          if (
+            otherIndex !== index &&
+            otherAction.action === "start" &&
+            pads[otherIndex]?.group === pad.group
+          )
+            queued.delete(otherIndex);
         }
       }
       queueAction(index, action, pad, origin);
@@ -523,11 +673,25 @@ async function triggerPad(index: number, position?: number, forceStart = false) 
     status(`Could not play audio: ${(e as Error).message}`);
   }
 }
-function configureLoopCut(ac: AudioContext, source: AudioBufferSourceNode, pad: Pad, tempo: number): number {
-  const end = loopCutEnd(pad.buffer.duration, source.playbackRate.value, tempo, pad.loopBeats ?? 0);
+function configureLoopCut(
+  ac: AudioContext,
+  source: AudioBufferSourceNode,
+  pad: Pad,
+  tempo: number,
+): number {
+  const end = loopCutEnd(
+    pad.buffer.duration,
+    source.playbackRate.value,
+    tempo,
+    pad.loopBeats ?? 0,
+  );
   let buffer = pad.buffer;
   if (end > buffer.duration) {
-    buffer = ac.createBuffer(pad.buffer.numberOfChannels, Math.ceil(end * pad.buffer.sampleRate), pad.buffer.sampleRate);
+    buffer = ac.createBuffer(
+      pad.buffer.numberOfChannels,
+      Math.ceil(end * pad.buffer.sampleRate),
+      pad.buffer.sampleRate,
+    );
     for (let channel = 0; channel < pad.buffer.numberOfChannels; channel++)
       buffer.copyToChannel(pad.buffer.getChannelData(channel), channel);
   }
@@ -539,30 +703,48 @@ function configureLoopCut(ac: AudioContext, source: AudioBufferSourceNode, pad: 
 
 function voiceOffset(voice: Voice, now: number): number {
   const source = voice.source;
-  const position = voice.offset + Math.max(0, now - voice.startedAt) * source.playbackRate.value;
-  const end = source.loop ? source.loopEnd || source.buffer!.duration : source.buffer!.duration;
+  const position =
+    voice.offset +
+    Math.max(0, now - voice.startedAt) * source.playbackRate.value;
+  const end = source.loop
+    ? source.loopEnd || source.buffer!.duration
+    : source.buffer!.duration;
   return source.loop ? position % end : Math.min(position, end);
 }
 
 function refreshVoice(index: number, realign = false) {
-  const pad = pads[index], voice = voices.get(index), ac = context;
+  const pad = pads[index],
+    voice = voices.get(index),
+    ac = context;
   if (!pad || !voice || !ac) return;
   try {
     const now = ac.currentTime;
     const previous = voice.source;
     const waiting = voice.startedAt > now;
-    const startTime = waiting || realign ? now + Math.max(0, (voice.startBeat - clockPosition()) * 60 / bpm) : now;
+    const startTime =
+      waiting || realign
+        ? now + Math.max(0, ((voice.startBeat - clockPosition()) * 60) / bpm)
+        : now;
     const previousOffset = voiceOffset(voice, now);
     const source = ac.createBufferSource();
     source.playbackRate.value = 2 ** (pad.pitch / 12);
     let offset: number;
     if (pad.mode === "loop-cut") {
       const end = configureLoopCut(ac, source, pad, bpm);
-      offset = loopCutOffset(clockPosition(), voice.startBeat, end, source.playbackRate.value, bpm);
+      offset = loopCutOffset(
+        clockPosition(),
+        voice.startBeat,
+        end,
+        source.playbackRate.value,
+        bpm,
+      );
     } else {
       source.buffer = pad.buffer;
       source.loop = pad.mode === "loop";
-      const elapsed = realign ? Math.max(0, clockPosition() - voice.startBeat) * 60 / bpm * source.playbackRate.value : previousOffset;
+      const elapsed = realign
+        ? ((Math.max(0, clockPosition() - voice.startBeat) * 60) / bpm) *
+          source.playbackRate.value
+        : previousOffset;
       if (!source.loop && elapsed >= pad.buffer.duration) {
         stopPad(index);
         return;
@@ -581,7 +763,8 @@ function refreshVoice(index: number, realign = false) {
     source.start(startTime, offset);
     voice.source = source;
     voice.startedAt = startTime;
-    if (startTime > now) setTimeout(updateLights, (startTime - now) * 1000 + 20);
+    if (startTime > now)
+      setTimeout(updateLights, (startTime - now) * 1000 + 20);
     voice.offset = offset;
     previous.stop(now);
     updateVoiceGain(index);
@@ -591,21 +774,28 @@ function refreshVoice(index: number, realign = false) {
   }
 }
 function updateVoiceGain(index: number) {
-  const pad = pads[index], voice = voices.get(index), ac = context;
+  const pad = pads[index],
+    voice = voices.get(index),
+    ac = context;
   if (!pad || !voice || !ac) return;
   const now = ac.currentTime;
   const start = Math.max(now, voice.startedAt);
   const gain = voice.gain.gain;
   const duration = pad.buffer.duration / voice.source.playbackRate.value;
-  const elapsed = Math.max(0, (clockPosition() - voice.startBeat) * 60 / bpm);
+  const elapsed = Math.max(0, ((clockPosition() - voice.startBeat) * 60) / bpm);
   const fadeIn = Math.min(pad.fadein, duration);
   const fadeRemaining = Math.max(0, fadeIn - elapsed);
   gain.cancelAndHoldAtTime(now);
   if (start > now) gain.setValueAtTime(fadeIn ? 0 : pad.volume, start);
-  if (fadeRemaining) gain.linearRampToValueAtTime(pad.volume, start + fadeRemaining);
+  if (fadeRemaining)
+    gain.linearRampToValueAtTime(pad.volume, start + fadeRemaining);
   else gain.setTargetAtTime(pad.volume, start, 0.005);
   if (!voice.source.loop && pad.fadeout > 0) {
-    const remaining = Math.max(0, (pad.buffer.duration - voiceOffset(voice, now)) / voice.source.playbackRate.value);
+    const remaining = Math.max(
+      0,
+      (pad.buffer.duration - voiceOffset(voice, now)) /
+        voice.source.playbackRate.value,
+    );
     const fade = Math.min(pad.fadeout, Math.max(0, remaining - fadeRemaining));
     if (fade) {
       gain.setValueAtTime(pad.volume, start + remaining - fade);
@@ -614,22 +804,33 @@ function updateVoiceGain(index: number) {
   }
 }
 function reschedulePadAction(index: number) {
-  const entry = queued.get(index), pad = pads[index], voice = voices.get(index);
+  const entry = queued.get(index),
+    pad = pads[index],
+    voice = voices.get(index);
   if (!pad) return;
   if (entry) queueAction(index, entry.action, pad, entry.origin);
   if (voice) {
-    voice.startBeat = triggerBeat(voice.triggerOrigin, pad.triggerBeats, pad.triggerDelay ?? 0);
+    voice.startBeat = triggerBeat(
+      voice.triggerOrigin,
+      pad.triggerBeats,
+      pad.triggerDelay ?? 0,
+    );
     refreshVoice(index, true);
   }
   updateLights();
 }
 
-async function playPad(index: number, scheduledBeat?: number, triggerOrigin?: number) {
+async function playPad(
+  index: number,
+  scheduledBeat?: number,
+  triggerOrigin?: number,
+) {
   const pad = pads[index];
   if (!pad) return;
   if (exclusiveGroup(pad.group)) {
     pads.forEach((other, otherIndex) => {
-      if (otherIndex !== index && other?.group === pad.group) stopPad(otherIndex, true);
+      if (otherIndex !== index && other?.group === pad.group)
+        stopPad(otherIndex, true);
     });
   }
   stopPad(index);
@@ -647,11 +848,12 @@ async function playPad(index: number, scheduledBeat?: number, triggerOrigin?: nu
     const duration = pad.buffer.duration / source.playbackRate.value,
       now = ac.currentTime,
       startBeat = scheduledBeat ?? clockPosition(),
-      startTime = now + Math.max(0, (startBeat - clockPosition()) * 60 / bpm),
+      startTime = now + Math.max(0, ((startBeat - clockPosition()) * 60) / bpm),
       fadeIn = Math.min(pad.fadein, duration),
       fadeOut = Math.min(pad.fadeout, Math.max(0, duration - fadeIn));
     gain.gain.setValueAtTime(fadeIn ? 0 : pad.volume, startTime);
-    if (fadeIn) gain.gain.linearRampToValueAtTime(pad.volume, startTime + fadeIn);
+    if (fadeIn)
+      gain.gain.linearRampToValueAtTime(pad.volume, startTime + fadeIn);
     if (pad.mode !== "loop" && pad.mode !== "loop-cut" && fadeOut) {
       gain.gain.setValueAtTime(pad.volume, startTime + duration - fadeOut);
       gain.gain.linearRampToValueAtTime(0, startTime + duration);
@@ -660,16 +862,33 @@ async function playPad(index: number, scheduledBeat?: number, triggerOrigin?: nu
     let offset = 0;
     if (pad.mode === "loop-cut") {
       const end = configureLoopCut(ac, source, pad, bpm);
-      offset = loopCutOffset(clockPosition(), startBeat, end, source.playbackRate.value, bpm);
+      offset = loopCutOffset(
+        clockPosition(),
+        startBeat,
+        end,
+        source.playbackRate.value,
+        bpm,
+      );
     } else {
       source.buffer = pad.buffer;
       if (source.loop && scheduledBeat !== undefined)
-        offset = (Math.max(0, clockPosition() - startBeat) * 60 / bpm * source.playbackRate.value) % pad.buffer.duration;
+        offset =
+          (((Math.max(0, clockPosition() - startBeat) * 60) / bpm) *
+            source.playbackRate.value) %
+          pad.buffer.duration;
     }
     source.connect(gain);
     gain.connect(pan);
     pan.connect(master!);
-    const voice: Voice = { source, gain, pan, startBeat, triggerOrigin: triggerOrigin ?? startBeat, startedAt: startTime, offset };
+    const voice: Voice = {
+      source,
+      gain,
+      pan,
+      startBeat,
+      triggerOrigin: triggerOrigin ?? startBeat,
+      startedAt: startTime,
+      offset,
+    };
     voices.set(index, voice);
     source.onended = () => {
       source.disconnect();
@@ -680,7 +899,8 @@ async function playPad(index: number, scheduledBeat?: number, triggerOrigin?: nu
       updateLights();
     };
     source.start(startTime, offset);
-    if (startTime > now) setTimeout(updateLights, Math.max(0, (startTime - now) * 1000) + 20);
+    if (startTime > now)
+      setTimeout(updateLights, Math.max(0, (startTime - now) * 1000) + 20);
     updateLights();
   } catch (e) {
     pending.delete(index);
@@ -696,7 +916,10 @@ function release(index: number) {
 }
 function releasePad(index: number) {
   if (pads[index]?.mode !== "gate") return;
-  if (!pads[index]?.triggerBeats && !pads[index]?.triggerDelay) { stopPad(index, true); return; }
+  if (!pads[index]?.triggerBeats && !pads[index]?.triggerDelay) {
+    stopPad(index, true);
+    return;
+  }
   pending.delete(index);
   if (voices.has(index)) queueAction(index, "stop", pads[index]!);
   else queued.delete(index);
@@ -738,10 +961,16 @@ function updatePadGroupBadge(button: HTMLButtonElement, index: number) {
   const pad = pads[index];
   const group = pad?.group;
   const mapping = midiBank(midiMappings, Math.floor(index / 16))[index % 16];
-  button.setAttribute("aria-label", `${pad?.name || "Empty pad"}, key ${labels[index % 16]}${mapping ? `, MIDI ${midiLabel(mapping)}` : ""}${group ? `, group ${group}` : ""}`);
+  button.setAttribute(
+    "aria-label",
+    `${pad?.name || "Empty pad"}, key ${labels[index % 16]}${mapping ? `, MIDI ${midiLabel(mapping)}` : ""}${group ? `, group ${group}` : ""}`,
+  );
   button.classList.toggle("has-group", !!group);
   let badge = button.querySelector<HTMLElement>(".pad-group-badge");
-  if (!group) { badge?.remove(); return; }
+  if (!group) {
+    badge?.remove();
+    return;
+  }
   if (!badge) {
     badge = document.createElement("span");
     badge.className = "pad-group-badge";
@@ -752,7 +981,10 @@ function updatePadGroupBadge(button: HTMLButtonElement, index: number) {
 }
 function render() {
   $("bank-label").textContent = `${bank + 1}/${pads.length / 16}`;
-  $("bank-label").setAttribute("aria-label", `Bank ${bank + 1} of ${pads.length / 16}`);
+  $("bank-label").setAttribute(
+    "aria-label",
+    `Bank ${bank + 1} of ${pads.length / 16}`,
+  );
   $("bank-prev").disabled = !learning && bank === 0;
   $("bank-next").disabled = !learning && bank >= pads.length / 16 - 1;
   for (const id of midiControlIds) {
@@ -771,7 +1003,10 @@ function render() {
   $("midi-learn").classList.toggle("learning", learning);
   $("midi-learn").setAttribute("aria-pressed", String(learning));
   $("midi-learn").title = learning ? "Done learning" : "MIDI Learn";
-  $("midi-learn").setAttribute("aria-label", learning ? "Done learning" : "MIDI Learn");
+  $("midi-learn").setAttribute(
+    "aria-label",
+    learning ? "Done learning" : "MIDI Learn",
+  );
   renderStatusText();
   const grid = $("player-grid");
   grid.replaceChildren();
@@ -873,13 +1108,25 @@ function render() {
   renderEditor();
   updateLights();
 }
-type MidiTableRow = { id: string; label: string; pad?: number; continuous?: boolean };
+type MidiTableRow = {
+  id: string;
+  label: string;
+  pad?: number;
+  continuous?: boolean;
+};
 const midiTableRows: MidiTableRow[] = [
-  { id: "record", label: "Record" }, { id: "stop-all", label: "Stop all" },
-  { id: "bank-prev", label: "Previous bank" }, { id: "bank-next", label: "Next bank" },
-  { id: "metronome", label: "Metronome" }, { id: "master-volume", label: "Master volume", continuous: true },
+  { id: "record", label: "Record" },
+  { id: "stop-all", label: "Stop all" },
+  { id: "bank-prev", label: "Previous bank" },
+  { id: "bank-next", label: "Next bank" },
+  { id: "metronome", label: "Metronome" },
+  { id: "master-volume", label: "Master volume", continuous: true },
   { id: "bpm", label: "BPM", continuous: true },
-  ...labels.map((label, pad) => ({ id: `pad-${pad}`, label: `Pad ${pad + 1} (${label})`, pad })),
+  ...labels.map((label, pad) => ({
+    id: `pad-${pad}`,
+    label: `Pad ${pad + 1} (${label})`,
+    pad,
+  })),
 ];
 function initMidiTable() {
   const list = $("midi-mapping-list") as HTMLElement;
@@ -895,22 +1142,45 @@ function initMidiTable() {
     type.setAttribute("aria-label", `${row.label} MIDI type`);
     type.innerHTML = `<option value="">None</option>${row.continuous ? "" : '<option value="note">Note</option>'}<option value="cc">CC</option>`;
     el.append(type);
-    for (const [field, min, max] of [["channel", 1, 16], ["note", 0, 127]] as const) {
+    for (const [field, min, max] of [
+      ["channel", 1, 16],
+      ["note", 0, 127],
+    ] as const) {
       const input = document.createElement("input");
-      input.type = "number"; input.min = String(min); input.max = String(max); input.step = "1";
-      input.dataset.field = field; input.setAttribute("aria-label", `${row.label} ${field === "note" ? "MIDI number" : "channel"}`);
+      input.type = "number";
+      input.min = String(min);
+      input.max = String(max);
+      input.step = "1";
+      input.dataset.field = field;
+      input.setAttribute(
+        "aria-label",
+        `${row.label} ${field === "note" ? "MIDI number" : "channel"}`,
+      );
       el.append(input);
     }
     const device = document.createElement("select");
-    device.dataset.field = "inputId"; device.setAttribute("aria-label", `${row.label} MIDI input`); el.append(device);
+    device.dataset.field = "inputId";
+    device.setAttribute("aria-label", `${row.label} MIDI input`);
+    el.append(device);
     if (!row.continuous && row.pad === undefined) {
       const buttonType = document.createElement("select");
-      buttonType.dataset.field = "buttonType"; buttonType.setAttribute("aria-label", `${row.label} CC button type`);
-      buttonType.innerHTML = '<option value="momentary">Momentary</option><option value="toggle">Toggle</option>';
+      buttonType.dataset.field = "buttonType";
+      buttonType.setAttribute("aria-label", `${row.label} CC button type`);
+      buttonType.innerHTML =
+        '<option value="momentary">Momentary</option><option value="toggle">Toggle</option>';
       el.append(buttonType);
-    } else { const spacer = document.createElement("span"); spacer.textContent = row.continuous ? "Value" : "—"; el.append(spacer); }
+    } else {
+      const spacer = document.createElement("span");
+      spacer.textContent = row.continuous ? "Value" : "—";
+      el.append(spacer);
+    }
     const clear = document.createElement("button");
-    clear.type = "button"; clear.dataset.field = "clear"; clear.textContent = "×"; clear.title = `Clear ${row.label} mapping`; clear.setAttribute("aria-label", clear.title); el.append(clear);
+    clear.type = "button";
+    clear.dataset.field = "clear";
+    clear.textContent = "×";
+    clear.title = `Clear ${row.label} mapping`;
+    clear.setAttribute("aria-label", clear.title);
+    el.append(clear);
     list.append(el);
   }
   list.addEventListener("change", (event) => {
@@ -920,59 +1190,114 @@ function initMidiTable() {
     if (!row || !el) return;
     const field = input.dataset.field;
     if (field === "buttonType") {
-      midiButtonTypes[row.id] = input.value === "toggle" ? "toggle" : "momentary";
-      heldCc.clear(); saveGeneralOptions(); saveMidi(); return;
+      midiButtonTypes[row.id] =
+        input.value === "toggle" ? "toggle" : "momentary";
+      heldCc.clear();
+      saveGeneralOptions();
+      saveMidi();
+      return;
     }
-    const get = (name: string) => el.querySelector<HTMLInputElement | HTMLSelectElement>(`[data-field="${name}"]`)!;
+    const get = (name: string) =>
+      el.querySelector<HTMLInputElement | HTMLSelectElement>(
+        `[data-field="${name}"]`,
+      )!;
     const kind = get("kind").value;
     const bankNotes = midiBank(midiMappings, bank);
     if (!kind) {
-      if (row.pad !== undefined) bankNotes[row.pad] = null; else delete controlMidi[row.id];
+      if (row.pad !== undefined) bankNotes[row.pad] = null;
+      else delete controlMidi[row.id];
     } else {
-      const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, Number.isFinite(n) ? Math.round(n) : min));
+      const clamp = (n: number, min: number, max: number) =>
+        Math.max(min, Math.min(max, Number.isFinite(n) ? Math.round(n) : min));
       const inputId = get("inputId").value;
-      const mapping = { kind: kind as "note" | "cc", channel: clamp(Number(get("channel").value), 1, 16) - 1, note: clamp(Number(get("note").value), 0, 127), ...(inputId ? { inputId } : {}) };
-      if (row.pad !== undefined) bankNotes[row.pad] = mapping; else controlMidi[row.id] = mapping;
+      const mapping = {
+        kind: kind as "note" | "cc",
+        channel: clamp(Number(get("channel").value), 1, 16) - 1,
+        note: clamp(Number(get("note").value), 0, 127),
+        ...(inputId ? { inputId } : {}),
+      };
+      if (row.pad !== undefined) bankNotes[row.pad] = mapping;
+      else controlMidi[row.id] = mapping;
     }
-    heldCc.clear(); heldMidi.clear(); saveMidi(); render();
+    heldCc.clear();
+    heldMidi.clear();
+    saveMidi();
+    render();
   });
   list.addEventListener("click", (event) => {
     const target = event.target as HTMLElement;
     if (target.dataset.field !== "clear") return;
-    const row = midiTableRows.find((item) => item.id === target.closest<HTMLElement>("[data-row]")?.dataset.row);
+    const row = midiTableRows.find(
+      (item) =>
+        item.id === target.closest<HTMLElement>("[data-row]")?.dataset.row,
+    );
     if (!row) return;
-    if (row.pad !== undefined) midiBank(midiMappings, bank)[row.pad] = null; else delete controlMidi[row.id];
-    heldCc.clear(); heldMidi.clear(); saveMidi(); render();
+    if (row.pad !== undefined) midiBank(midiMappings, bank)[row.pad] = null;
+    else delete controlMidi[row.id];
+    heldCc.clear();
+    heldMidi.clear();
+    saveMidi();
+    render();
   });
 }
 function renderMidiTable() {
-  $("midi-bank-context").textContent = midiMappings.individual ? `Pads: Bank ${bank + 1}` : "Pads: Shared across banks";
+  $("midi-bank-context").textContent = midiMappings.individual
+    ? `Pads: Bank ${bank + 1}`
+    : "Pads: Shared across banks";
   const notes = midiBank(midiMappings, bank);
   for (const row of midiTableRows) {
-    const el = document.querySelector<HTMLElement>(`#midi-mapping-list [data-row="${row.id}"]`)!;
+    const el = document.querySelector<HTMLElement>(
+      `#midi-mapping-list [data-row="${row.id}"]`,
+    )!;
     if (!el) continue;
-    const mapping = row.pad !== undefined ? notes[row.pad] : controlMidi[row.id];
-    const get = (name: string) => el.querySelector<HTMLInputElement | HTMLSelectElement>(`[data-field="${name}"]`)!;
-    const kind = get("kind"), channel = get("channel"), number = get("note"), device = get("inputId") as HTMLSelectElement;
-    kind.value = mapping ? mapping.kind ?? "note" : "";
-    channel.value = String((mapping?.channel ?? 0) + 1); number.value = String(mapping?.note ?? 0);
+    const mapping =
+      row.pad !== undefined ? notes[row.pad] : controlMidi[row.id];
+    const get = (name: string) =>
+      el.querySelector<HTMLInputElement | HTMLSelectElement>(
+        `[data-field="${name}"]`,
+      )!;
+    const kind = get("kind"),
+      channel = get("channel"),
+      number = get("note"),
+      device = get("inputId") as HTMLSelectElement;
+    kind.value = mapping ? (mapping.kind ?? "note") : "";
+    channel.value = String((mapping?.channel ?? 0) + 1);
+    number.value = String(mapping?.note ?? 0);
     channel.disabled = number.disabled = device.disabled = !mapping;
     device.replaceChildren(new Option("Any", ""));
-    if (midi) for (const input of midi.inputs.values()) device.add(new Option(input.name || input.id, input.id));
-    if (mapping?.inputId && ![...device.options].some((option) => option.value === mapping.inputId)) device.add(new Option("Disconnected", mapping.inputId));
+    if (midi)
+      for (const input of midi.inputs.values())
+        device.add(new Option(input.name || input.id, input.id));
+    if (
+      mapping?.inputId &&
+      ![...device.options].some((option) => option.value === mapping.inputId)
+    )
+      device.add(new Option("Disconnected", mapping.inputId));
     device.value = mapping?.inputId ?? "";
-    const buttonType = el.querySelector<HTMLSelectElement>('[data-field="buttonType"]');
-    if (buttonType) { buttonType.value = midiButtonTypes[row.id] ?? midiButtonType; buttonType.disabled = mapping?.kind !== "cc"; }
+    const buttonType = el.querySelector<HTMLSelectElement>(
+      '[data-field="buttonType"]',
+    );
+    if (buttonType) {
+      buttonType.value = midiButtonTypes[row.id] ?? midiButtonType;
+      buttonType.disabled = mapping?.kind !== "cc";
+    }
   }
 }
 let editingPadName: number | null = null;
 let originalPadName = "";
 function renderEditor() {
   const pad = selected === null ? null : pads[selected];
-  $("editor").setAttribute("aria-label", selected === null ? "General options" : `Pad ${labels[selected % 16]}, bank ${Math.floor(selected / 16) + 1} settings`);
-  document.querySelectorAll<HTMLElement>("#general-options [data-edit-only]").forEach((section) => {
-    section.hidden = mode === "play";
-  });
+  $("editor").setAttribute(
+    "aria-label",
+    selected === null
+      ? "General options"
+      : `Pad ${labels[selected % 16]}, bank ${Math.floor(selected / 16) + 1} settings`,
+  );
+  document
+    .querySelectorAll<HTMLElement>("#general-options [data-edit-only]")
+    .forEach((section) => {
+      section.hidden = mode === "play";
+    });
   $("general-options").hidden = selected !== null;
   $("editor-controls").hidden = selected === null;
   $("master-volume").value = String(masterVolume);
@@ -982,7 +1307,9 @@ function renderEditor() {
   $("bpm-slider").value = String(bpm);
   $("quantize").value = String(defaultTriggerBeats);
   $("default-trigger-delay").value = String(defaultTriggerDelay);
-  groupModes.forEach((groupMode, index) => { $("group-mode-" + (index + 1)).value = groupMode; });
+  groupModes.forEach((groupMode, index) => {
+    $("group-mode-" + (index + 1)).value = groupMode;
+  });
   renderMetronomeButton();
   $("metronome-volume").value = String(metronomeVolume);
   $("metronome-volume-value").textContent =
@@ -1065,7 +1392,9 @@ function chooseZipImport(): Promise<string> {
 }
 async function loadZip(file: File, bytes?: Uint8Array) {
   try {
-    const entries = readSampleZip(bytes ?? new Uint8Array(await file.arrayBuffer())),
+    const entries = readSampleZip(
+        bytes ?? new Uint8Array(await file.arrayBuffer()),
+      ),
       ac = await audio(),
       loaded: Pad[] = [];
     for (const entry of entries)
@@ -1140,20 +1469,32 @@ function beatDisplayActive(): boolean {
     context?.state === "running",
     metronomeEnabled || (recording && metronomeOnRecord),
     recording || counting,
-    !!context && [...voices.values()].some((voice) => voice.source.loop && voice.startedAt <= context!.currentTime),
+    !!context &&
+      [...voices.values()].some(
+        (voice) => voice.source.loop && voice.startedAt <= context!.currentTime,
+      ),
   );
 }
 function resetBeatIfIdle() {
   if (beatDisplayActive()) return;
   firstDisplayBeat = null;
   $("beat-indicator").setAttribute("aria-label", "Beat indicator idle");
-  $("beat-indicator").querySelectorAll(".beat-led.lit").forEach((led: Element) => led.classList.remove("lit"));
+  $("beat-indicator")
+    .querySelectorAll(".beat-led.lit")
+    .forEach((led: Element) => led.classList.remove("lit"));
 }
 function stopBeatClockIfIdle() {
-  if (!clockRunning || !shouldStopIdleClock(
-    clockHold > 0, metronomeEnabled, recording || counting,
-    queued.size > 0 || pending.size > 0, [...voices.values()].some((voice) => voice.source.loop),
-  )) return;
+  if (
+    !clockRunning ||
+    !shouldStopIdleClock(
+      clockHold > 0,
+      metronomeEnabled,
+      recording || counting,
+      queued.size > 0 || pending.size > 0,
+      [...voices.values()].some((voice) => voice.source.loop),
+    )
+  )
+    return;
   clockRunning = false;
   if (metronomeTimer) clearTimeout(metronomeTimer);
   metronomeTimer = null;
@@ -1161,17 +1502,23 @@ function stopBeatClockIfIdle() {
   nextBeat = performance.now();
 }
 function updateMetronome() {
-  if (!clockRunning && (metronomeEnabled || recording || counting)) resetBeatClock();
+  if (!clockRunning && (metronomeEnabled || recording || counting))
+    resetBeatClock();
   stopBeatClockIfIdle();
   resetBeatIfIdle();
 }
 function showBeat(beat: number) {
   const indicator = $("beat-indicator");
   indicator.setAttribute("aria-label", `Beat ${beat + 1} of 4`);
-  indicator.querySelectorAll(".beat-led").forEach((led: HTMLElement, index: number) => {
-    led.classList.remove("lit");
-    if (index === beat) { void led.offsetWidth; led.classList.add("lit"); }
-  });
+  indicator
+    .querySelectorAll(".beat-led")
+    .forEach((led: HTMLElement, index: number) => {
+      led.classList.remove("lit");
+      if (index === beat) {
+        void led.offsetWidth;
+        led.classList.add("lit");
+      }
+    });
 }
 function beatTick() {
   if (!clockRunning) return;
@@ -1180,7 +1527,10 @@ function beatTick() {
     const interval = 60000 / bpm;
     const steps = Math.floor((now - nextBeat) / interval) + 1;
     const running = context?.state === "running";
-    const metronomeActive = running && !counting && (metronomeEnabled || (recording && metronomeOnRecord));
+    const metronomeActive =
+      running &&
+      !counting &&
+      (metronomeEnabled || (recording && metronomeOnRecord));
     if (beatDisplayActive()) {
       const currentBeat = beatNumber + steps - 1;
       firstDisplayBeat ??= currentBeat;
@@ -1191,11 +1541,17 @@ function beatTick() {
     nextBeat += steps * interval;
   }
   stopBeatClockIfIdle();
-  if (clockRunning) metronomeTimer = setTimeout(beatTick, Math.max(0, nextBeat - performance.now()));
+  if (clockRunning)
+    metronomeTimer = setTimeout(
+      beatTick,
+      Math.max(0, nextBeat - performance.now()),
+    );
 }
 function resetBeatClock(leadMs = 0) {
   const now = performance.now();
-  const previousPosition = clockRunning ? beatNumber + (now - nextBeat) / (60000 / bpm) : 0;
+  const previousPosition = clockRunning
+    ? beatNumber + (now - nextBeat) / (60000 / bpm)
+    : 0;
   const newPosition = -leadMs / (60000 / bpm);
   const shift = previousPosition - newPosition;
   for (const voice of voices.values()) {
@@ -1215,15 +1571,23 @@ function resetBeatClock(leadMs = 0) {
   else beatTick();
   scheduleQueue();
 }
-function setRecordButtonState(state: "ready" | "recording" | "counting" | "finishing") {
-  const label = { ready: "Record WAV", recording: "Stop recording", counting: "Cancel count-in", finishing: "Finishing recording" }[state];
+function setRecordButtonState(
+  state: "ready" | "recording" | "counting" | "finishing",
+) {
+  const label = {
+    ready: "Record WAV",
+    recording: "Stop recording",
+    counting: "Cancel count-in",
+    finishing: "Finishing recording",
+  }[state];
   const button = $("record") as HTMLButtonElement;
   button.dataset.label = label;
   button.title = label;
   button.setAttribute("aria-label", label);
-  button.innerHTML = state === "ready"
-    ? '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6" fill="currentColor"/></svg>'
-    : '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1" fill="currentColor"/></svg>';
+  button.innerHTML =
+    state === "ready"
+      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="6" fill="currentColor"/></svg>'
+      : '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1" fill="currentColor"/></svg>';
 }
 function startCount(ac: AudioContext): Promise<boolean> {
   counting = true;
@@ -1265,7 +1629,11 @@ $("bpm").onchange = (event: Event) => {
   $("bpm").value = String(bpm);
   $("bpm-slider").value = String(bpm);
   for (const [index] of voices) {
-    if (pads[index]?.mode === "loop-cut" || (context && voices.get(index)!.startedAt > context.currentTime)) refreshVoice(index);
+    if (
+      pads[index]?.mode === "loop-cut" ||
+      (context && voices.get(index)!.startedAt > context.currentTime)
+    )
+      refreshVoice(index);
   }
   renderEditor();
   logGeneral("BPM changed", bpm);
@@ -1304,7 +1672,9 @@ async function setMetronome(enabled: boolean) {
     status("Metronome audio is unavailable.");
   }
 }
-$("metronome").onclick = () => { void setMetronome(!metronomeEnabled); };
+$("metronome").onclick = () => {
+  void setMetronome(!metronomeEnabled);
+};
 $("metronome-volume").oninput = (event: Event) => {
   metronomeVolume = Number((event.target as HTMLInputElement).value);
   $("metronome-volume-value").textContent =
@@ -1516,11 +1886,24 @@ $("project-file").onchange = async (event: Event) => {
           pad !== null &&
           (!(pad.buffer instanceof AudioBuffer) ||
             typeof pad.name !== "string" ||
-            (pad.loopBeats !== undefined && ![0, 0.0625, 0.125, 0.25, 0.5, 1, 2, 4, 8, 16, 32].includes(pad.loopBeats)) ||
-            (pad.triggerDelay !== undefined && (!Number.isFinite(pad.triggerDelay) || pad.triggerDelay < 0 || pad.triggerDelay > 16)) ||
-            (pad.triggerBeats !== undefined && (!Number.isFinite(pad.triggerBeats) || pad.triggerBeats < 0 || pad.triggerBeats > 1024)) ||
-            ((pad as any).quantize !== undefined && typeof (pad as any).quantize !== "boolean") ||
-            (pad.group !== undefined && !["", "1", "2", "3", "4", "5", "6", "7", "8"].includes(pad.group)) ||
+            (pad.loopBeats !== undefined &&
+              ![0, 0.0625, 0.125, 0.25, 0.5, 1, 2, 4, 8, 16, 32].includes(
+                pad.loopBeats,
+              )) ||
+            (pad.triggerDelay !== undefined &&
+              (!Number.isFinite(pad.triggerDelay) ||
+                pad.triggerDelay < 0 ||
+                pad.triggerDelay > 16)) ||
+            (pad.triggerBeats !== undefined &&
+              (!Number.isFinite(pad.triggerBeats) ||
+                pad.triggerBeats < 0 ||
+                pad.triggerBeats > 1024)) ||
+            ((pad as any).quantize !== undefined &&
+              typeof (pad as any).quantize !== "boolean") ||
+            (pad.group !== undefined &&
+              !["", "1", "2", "3", "4", "5", "6", "7", "8"].includes(
+                pad.group,
+              )) ||
             !["one-shot", "loop", "gate", "loop-cut"].includes(pad.mode)),
       )
     )
@@ -1546,7 +1929,10 @@ $("project-file").onchange = async (event: Event) => {
         !["one-shot", "loop", "gate", "loop-cut"].includes(saved.defaultMode))
     )
       throw new Error("Invalid player project options.");
-    if (saved.midiButtonTypes !== undefined && !validButtonTypes(saved.midiButtonTypes))
+    if (
+      saved.midiButtonTypes !== undefined &&
+      !validButtonTypes(saved.midiButtonTypes)
+    )
       throw new Error("Invalid MIDI button types.");
     if (saved.groupModes !== undefined && !validGroupModes(saved.groupModes))
       throw new Error("Invalid group modes.");
@@ -1566,7 +1952,19 @@ $("project-file").onchange = async (event: Event) => {
       throw new Error("Invalid metronome volume.");
     stopAll();
     pads = saved.pads.map((pad: Pad | null) =>
-      pad ? { ...pad, triggerDelay: beatInterval(pad.triggerDelay), triggerBeats: beatInterval(pad.triggerBeats, (pad as any).quantize === true || ((pad as any).quantize === undefined && saved.quantize === true) ? 1 : 0) } : null,
+      pad
+        ? {
+            ...pad,
+            triggerDelay: beatInterval(pad.triggerDelay),
+            triggerBeats: beatInterval(
+              pad.triggerBeats,
+              (pad as any).quantize === true ||
+                ((pad as any).quantize === undefined && saved.quantize === true)
+                ? 1
+                : 0,
+            ),
+          }
+        : null,
     );
     midiMappings = restoredMappings;
     controlMidi = saved.controlMidi || {};
@@ -1574,7 +1972,10 @@ $("project-file").onchange = async (event: Event) => {
     nextBeat = performance.now() + 60000 / bpm;
     if (metronomeTimer) clearTimeout(metronomeTimer);
     beatTick();
-    defaultTriggerBeats = beatInterval(saved.defaultTriggerBeats, saved.quantize === true ? 1 : 0);
+    defaultTriggerBeats = beatInterval(
+      saved.defaultTriggerBeats,
+      saved.quantize === true ? 1 : 0,
+    );
     defaultTriggerDelay = beatInterval(saved.defaultTriggerDelay);
     groupModes = saved.groupModes?.slice() ?? Array(8).fill("one");
     metronomeEnabled = saved.metronomeEnabled === true;
@@ -1646,21 +2047,34 @@ $("remove-pad").onclick = () => {
 };
 function reconcileGroup(group: string | undefined, preferred?: number) {
   if (!group) return;
-  const members = pads.flatMap((pad, index) => pad?.group === group ? [index] : []);
-  if (!members.length) { groupDesired.delete(group); return; }
-  const active = (index: number) => voices.has(index) || pending.has(index) || queued.get(index)?.action === "start";
+  const members = pads.flatMap((pad, index) =>
+    pad?.group === group ? [index] : [],
+  );
+  if (!members.length) {
+    groupDesired.delete(group);
+    return;
+  }
+  const active = (index: number) =>
+    voices.has(index) ||
+    pending.has(index) ||
+    queued.get(index)?.action === "start";
   const candidates = members.filter(active);
   if (exclusiveGroup(group)) {
     const keep = groupSurvivor(candidates, [...voices.keys()], preferred);
     for (const index of members) if (index !== keep) stopPad(index, true);
     groupDesired.delete(group);
   } else {
-    const preferredOn = preferred !== undefined && active(preferred) && queued.get(preferred)?.action !== "stop";
-    const on = !!candidates.length && (preferredOn || (groupDesired.get(group) ?? true));
+    const preferredOn =
+      preferred !== undefined &&
+      active(preferred) &&
+      queued.get(preferred)?.action !== "stop";
+    const on =
+      !!candidates.length && (preferredOn || (groupDesired.get(group) ?? true));
     groupDesired.set(group, on);
     if (on) {
-      const reference = (preferred !== undefined ? voices.get(preferred) : undefined)
-        ?? candidates.map((index) => voices.get(index)).find(Boolean);
+      const reference =
+        (preferred !== undefined ? voices.get(preferred) : undefined) ??
+        candidates.map((index) => voices.get(index)).find(Boolean);
       const origin = reference?.triggerOrigin ?? clockPosition();
       for (const index of members) {
         if (queued.get(index)?.action === "stop") queued.delete(index);
@@ -1680,19 +2094,24 @@ $("pad-quantize").onchange = (e: Event) => {
 };
 $("pad-trigger-delay").onchange = (e: Event) => {
   if (selected === null || !pads[selected]) return;
-  pads[selected]!.triggerDelay = beatInterval(Number((e.target as HTMLSelectElement).value));
+  pads[selected]!.triggerDelay = beatInterval(
+    Number((e.target as HTMLSelectElement).value),
+  );
   reschedulePadAction(selected);
 };
 for (let index = 0; index < 8; index++) {
   $("group-mode-" + (index + 1)).onchange = (event: Event) => {
     const group = String(index + 1);
-    groupModes[index] = (event.target as HTMLSelectElement).value === "all" ? "all" : "one";
+    groupModes[index] =
+      (event.target as HTMLSelectElement).value === "all" ? "all" : "one";
     reconcileGroup(group);
     saveGeneralOptions();
   };
 }
 $("default-trigger-delay").onchange = (e: Event) => {
-  defaultTriggerDelay = beatInterval(Number((e.target as HTMLSelectElement).value));
+  defaultTriggerDelay = beatInterval(
+    Number((e.target as HTMLSelectElement).value),
+  );
   saveGeneralOptions();
 };
 $("pad-loop-beats").onchange = (e: Event) => {
@@ -1707,13 +2126,17 @@ $("pad-group").onchange = (e: Event) => {
   const oldGroup = pads[index]!.group;
   const group = (e.target as HTMLSelectElement).value;
   pads[index]!.group = group;
-  const button = document.querySelector<HTMLButtonElement>(`[data-pad="${index}"]`);
+  const button = document.querySelector<HTMLButtonElement>(
+    `[data-pad="${index}"]`,
+  );
   if (button) updatePadGroupBadge(button, index);
   reconcileGroup(oldGroup);
   reconcileGroup(group, index);
 };
 $("quantize").onchange = (e: Event) => {
-  defaultTriggerBeats = beatInterval(Number((e.target as HTMLInputElement).value));
+  defaultTriggerBeats = beatInterval(
+    Number((e.target as HTMLInputElement).value),
+  );
   (e.target as HTMLInputElement).value = String(defaultTriggerBeats);
   saveGeneralOptions();
 };
@@ -1765,8 +2188,10 @@ for (const field of [
     else pad[field] = Number((e.target as HTMLInputElement).value);
     const voice = voices.get(selected);
     if (field === "mode" || field === "pitch") refreshVoice(selected);
-    else if (field === "pan" && voice && context) voice.pan.pan.setTargetAtTime(pad.pan, context.currentTime, 0.005);
-    else if (field === "volume" || field === "fadein" || field === "fadeout") updateVoiceGain(selected);
+    else if (field === "pan" && voice && context)
+      voice.pan.pan.setTargetAtTime(pad.pan, context.currentTime, 0.005);
+    else if (field === "volume" || field === "fadein" || field === "fadeout")
+      updateVoiceGain(selected);
     renderEditor();
   };
 function connectMidi() {
@@ -1803,10 +2228,23 @@ function handleMidi(event: MIDIMessageEvent) {
   if (kind === 0xb0) {
     const control = midiButtonIds.find((id) => {
       const mapping = controlMidi[id];
-      return mapping?.kind === "cc" && mapping.channel === channel && mapping.note === note && matchesMidiInput(mapping, inputId);
+      return (
+        mapping?.kind === "cc" &&
+        mapping.channel === channel &&
+        mapping.note === note &&
+        matchesMidiInput(mapping, inputId)
+      );
     });
     if (control) {
-      if (ccPressed(heldCc, key, velocity, (midiButtonTypes[control] ?? midiButtonType) === "toggle")) activateMidiControl(control);
+      if (
+        ccPressed(
+          heldCc,
+          key,
+          velocity,
+          (midiButtonTypes[control] ?? midiButtonType) === "toggle",
+        )
+      )
+        activateMidiControl(control);
       return;
     }
     const mapping = controlMidi["master-volume"];
@@ -1883,7 +2321,13 @@ function handleMidi(event: MIDIMessageEvent) {
     return;
   triggerMidiPads("note", channel, note, inputId, key);
 }
-function triggerMidiPads(mappingKind: "note" | "cc", channel: number, note: number, inputId: string, key: string) {
+function triggerMidiPads(
+  mappingKind: "note" | "cc",
+  channel: number,
+  note: number,
+  inputId: string,
+  key: string,
+) {
   const indexes: number[] = [];
   for (let i = bank * 16; i < bank * 16 + 16; i++) {
     const mapping = midiBank(midiMappings, bank)[i % 16];
@@ -1944,7 +2388,9 @@ function assignLearnedNote(index: number) {
     inputId: learnedNote.inputId,
   };
   saveMidi();
-  status(`Assigned ${learnedNote.kind === "cc" ? "CC" : "note"} ${learnedNote.note} to pad ${labels[index % 16]}.`);
+  status(
+    `Assigned ${learnedNote.kind === "cc" ? "CC" : "note"} ${learnedNote.note} to pad ${labels[index % 16]}.`,
+  );
   learnedNote = null;
   render();
 }
@@ -2217,7 +2663,11 @@ document.addEventListener("keyup", (e) => {
   }
 });
 window.addEventListener("blur", () => {
-  for (const index of new Set([...heldKeys.values(), ...heldButtonKeys.values()])) release(index);
+  for (const index of new Set([
+    ...heldKeys.values(),
+    ...heldButtonKeys.values(),
+  ]))
+    release(index);
   heldKeys.clear();
   heldButtonKeys.clear();
 });

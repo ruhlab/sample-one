@@ -1,5 +1,8 @@
 /** Prime the sample and metronome audio paths without producing audible output. */
-export function warmPlayerAudio(context: AudioContext, destination: AudioNode): void {
+export function warmPlayerAudio(
+  context: AudioContext,
+  destination: AudioNode,
+): void {
   const gain = context.createGain();
   const pan = context.createStereoPanner();
   const sample = context.createBufferSource();

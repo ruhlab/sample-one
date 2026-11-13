@@ -1,4 +1,9 @@
-export type MidiNote = { channel: number; note: number; inputId?: string; kind?: "note" | "cc" };
+export type MidiNote = {
+  channel: number;
+  note: number;
+  inputId?: string;
+  kind?: "note" | "cc";
+};
 export type MidiMappings = {
   individual: boolean;
   shared: (MidiNote | null)[];
@@ -25,7 +30,9 @@ export function validateMidiMappings(value: any): value is MidiMappings {
       (entry: any) =>
         entry === null ||
         (entry &&
-          (entry.kind === undefined || entry.kind === "note" || entry.kind === "cc") &&
+          (entry.kind === undefined ||
+            entry.kind === "note" ||
+            entry.kind === "cc") &&
           Number.isInteger(entry.note) &&
           entry.note >= 0 &&
           entry.note <= 127 &&

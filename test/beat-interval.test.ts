@@ -1,5 +1,12 @@
 import { expect, test } from "bun:test";
-import { beatInterval, crossesBeatBoundary, triggerBeat, nextBeatAtTempo, queueWakeBeat, rebaseBeat } from "../src/features/beat-interval.ts";
+import {
+  beatInterval,
+  crossesBeatBoundary,
+  triggerBeat,
+  nextBeatAtTempo,
+  queueWakeBeat,
+  rebaseBeat,
+} from "../src/features/beat-interval.ts";
 
 test("beat intervals use supported values", () => {
   expect(beatInterval(0.0625)).toBe(0.0625);
@@ -57,5 +64,7 @@ test("resetting the clock preserves relative queued and playing beat positions",
 
 test("an idle group launch starts the first quantized beat at zero", () => {
   const position = -40 / (60000 / 101);
-  expect([0, 0, 1, 0.25].map((delay) => triggerBeat(position, 1, delay))).toEqual([0, 0, 1, 0.25]);
+  expect(
+    [0, 0, 1, 0.25].map((delay) => triggerBeat(position, 1, delay)),
+  ).toEqual([0, 0, 1, 0.25]);
 });

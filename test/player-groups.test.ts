@@ -1,5 +1,9 @@
 import { expect, test } from "bun:test";
-import { groupTargets, nextGroupState, groupSurvivor } from "../src/features/player-groups.ts";
+import {
+  groupTargets,
+  nextGroupState,
+  groupSurvivor,
+} from "../src/features/player-groups.ts";
 
 test("play all resolves every loaded group member across banks once", () => {
   const pads = Array(18).fill(null);
@@ -36,8 +40,20 @@ test("re-enabling a mixed playing and queued group restarts every member on one 
     { index: 2, playing: true },
     { index: 3, playing: false },
   ];
-  expect(groupTogglePlan(false, members).map((entry) => entry.action)).toEqual(["stop", "cancel", "stop", "cancel"]);
-  expect(groupTogglePlan(true, members).map((entry) => entry.action)).toEqual(["restart", "restart", "restart", "restart"]);
+  expect(groupTogglePlan(false, members).map((entry) => entry.action)).toEqual([
+    "stop",
+    "cancel",
+    "stop",
+    "cancel",
+  ]);
+  expect(groupTogglePlan(true, members).map((entry) => entry.action)).toEqual([
+    "restart",
+    "restart",
+    "restart",
+    "restart",
+  ]);
   const origin = 5.3;
-  expect([0, 0, 1, 0.25].map((delay) => triggerBeat(origin, 1, delay))).toEqual([6, 6, 7, 6.25]);
+  expect([0, 0, 1, 0.25].map((delay) => triggerBeat(origin, 1, delay))).toEqual(
+    [6, 6, 7, 6.25],
+  );
 });
